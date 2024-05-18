@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .cart-title {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 1rem;
+        }
+        .btn-danger {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center cart-title">Cart </h1>
+
+        <div class="row">
+            {{#each productos}}
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Product: {{this.product.title}}</h5>
+                        <p class="card-text">Quantity: {{this.quantity}}</p>
+                        <p class="card-text">Price: ${{this.product.totalPrice}}</p>
+                        <button onclick="deleteProduct('{{this.cartId}}', '{{this.product._id}}')" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <button onclick="emptyCart('{{cartId}}')" class="btn btn-danger">Empty Cart</button>
+            <h3 class="mt-2">Total: ${{totalCompra}}</h3>
+        </div>
+    </div>
+
+    <script>
+        function deleteProduct(cartId, productId) {
+            fetch(`/api/carts/${cartId}/product/${productId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al eliminar el producto del carrito');
+                }
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function emptyCart(cartId) {
+            fetch(`/api/carts/${cartId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al vaciar el carrito');
+                }
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

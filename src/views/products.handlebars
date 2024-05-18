@@ -1,0 +1,62 @@
+
+<div class="d-flex justify-content-center align-items-center">
+  <h1 class="text-center">Products</h1>
+  <a href="/carts/{{cartId}}" class="ms-5">
+   
+  </a>
+</div>
+<div class="container">
+    <div class="row">
+        {{#each products}}
+        <div class="card col-xl-4 col-md-6 col-sm-12">
+          
+            <div class="card-body">
+                <h2 class="card-title">{{title}}</h2>
+                <p class="card-text">{{description}}</p>
+                <p class="card-text">Price: ${{price}}</p>
+                <form class="add-to-cart-form">
+                    <input type="hidden" name="productId" value="{{id}}">
+                    <button class="btnMios" type="submit">Add to cart</button>
+                </form>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="row text-center"> <!-- Centra los enlaces horizontalmente -->
+        {{#if hasPrevPage}}
+        <a href="/products?page={{prevPage}}"> Previous </a>
+        {{/if}}
+        {{#if hasNextPage}}
+        <a href="/products?page={{nextPage}}"> Next </a>
+        {{/if}}
+        <p>Page {{currentPage}} of {{totalPages}} </p>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.add-to-cart-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const productId = form.querySelector('input[name="productId"]').value;
+        try {
+            const response = await fetch(`/api/carts/{{cartId}}/product/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to add product to cart');
+            }
+            // Redirect to the cart page
+            window.location.href = `/carts/{{cartId}}`;
+        } catch (error) {
+            console.error('Error adding product to cart:', error);
+            // Optionally, show error message to user
+        }
+    });
+});
+</script>

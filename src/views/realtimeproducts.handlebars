@@ -1,0 +1,58 @@
+<!-- Container for the heading -->
+<div class="heading-container">
+    <h1>Available Products</h1>
+</div>
+
+<!-- Container for the products -->
+<div id="productContainer" class="container"></div>
+
+<!-- Form to add a new product -->
+<div class="form-container">
+    <h2>Add Product</h2>
+    <form>
+        <!-- Input fields for product details -->
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" placeholder="Title">
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" id="description" placeholder="Description">
+        </div>
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="number" id="price" placeholder="Price">
+        </div>
+        <div class="form-group">
+            <label for="image">Image URL:</label>
+            <input type="text" id="image" placeholder="Image URL">
+        </div>
+        <div class="form-group">
+            <label for="code">Product Code:</label>
+            <input type="text" id="code" placeholder="Product Code">
+        </div>
+        <div class="form-group">
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" placeholder="Stock">
+        </div>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <input type="text" id="category" placeholder="Category">
+        </div>
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status">
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+            </select>
+        </div>
+        <!-- Button to add a product -->
+        <div class="form-group">
+            <button type="button" id="send">Add Product</button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.socket.io/4.7.3/socket.io.min.js"></script>
+<!-- Include the main.js file for socket connection and event handling -->
+<script src= "/js/realtime.js"></script>

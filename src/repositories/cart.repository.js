@@ -23,6 +23,19 @@ class CartRepository {
             throw new Error("Error");
         }
     }
+    async deleteProduct(cartId, productId) {
+        try {
+            const cart = await CartModel.findById(cartId);
+            if (!cart) {
+                throw new Error('Cart was not found');
+            }
+            cart.products = cart.products.filter(item => item.product._id.toString() !== productId);
+            await cart.save();
+            return cart;
+        } catch (error) {
+            throw new Error("Error");
+        }
+    }
 
     async addProduct(cartId, productId, quantity = 1) {
         try {
@@ -45,19 +58,7 @@ class CartRepository {
         }
     }
 
-    async deleteProduct(cartId, productId) {
-        try {
-            const cart = await CartModel.findById(cartId);
-            if (!cart) {
-                throw new Error('Cart was not found');
-            }
-            cart.products = cart.products.filter(item => item.product._id.toString() !== productId);
-            await cart.save();
-            return cart;
-        } catch (error) {
-            throw new Error("Error");
-        }
-    }
+
 
     async updateCart(cartId, updatedProducts) {
         try {

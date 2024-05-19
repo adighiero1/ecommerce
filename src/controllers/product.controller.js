@@ -16,10 +16,10 @@ class ProductController {
 
     async getProducts(req, res) {
         try {
-            let { limit = 5, page = 1, sort, query } = req.query;
+            let { limit = 10, page = 1, sort, query } = req.query;
 
             const products = await productRepository.getProducts(limit, page, sort, query);
-           
+            console.log(products);
             res.json(products);
         } catch (error) { 
             res.status(500).send("Error");

@@ -6,13 +6,13 @@ console.log("connected");
 
 
 // Listen for the "products" event from the server and call printProducts with the received data
-socket.on("products", (data) => {//same
+socket.on("products", (data) => {
     console.log(data)
     printProducts(data);
 });
 
 // Function to render products on the client side
-const printProducts = (products) => {//same
+const printProducts = (products) => {
     const productContainer = document.getElementById("productContainer");
     productContainer.innerHTML = "";
 

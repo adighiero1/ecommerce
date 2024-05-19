@@ -38,6 +38,10 @@ class SocketManager {
             });
         });
     }
+
+    async emitUpdatedProducts(socket) {
+        socket.emit("products", await productRepository.getProducts());
+    }
     
 }
 

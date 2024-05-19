@@ -9,19 +9,21 @@ class ViewsController {
         try {
             const { page = 1, limit = 6 } = req.query;
             const skip = (page - 1) * limit;
-    
+
             const products = await ProductModel.aggregate([
                 { $skip: skip },
                 { $limit: parseInt(limit) },
-                { $addFields: { id: { $toString: "$_id" } } }, // Convert _id to string
-                { $project: { _id: 0, id: 1, ...req.body } } // Include all fields from ProductModel
+                { $addFields: { id: { $toString: "$_id" } } },
+                { $project: { _id: 0, id: 1, title: 1, description: 1, price: 1, img: 1 } } // Explicitly project required fields
             ]);
-    
+
+            console.log("Fetched products:", products);
+
             const totalProducts = await ProductModel.countDocuments();
             const totalPages = Math.ceil(totalProducts / limit);
             const hasPrevPage = page > 1;
             const hasNextPage = page < totalPages;
-    
+
             res.render("products", {
                 products,
                 hasPrevPage,
@@ -32,12 +34,12 @@ class ViewsController {
                 totalPages,
                 cartId: req.user.cart.toString()
             });
-    
+
         } catch (error) {
             console.error("Error fetching products", error);
             res.status(500).json({
                 status: 'error',
-                error: "Internal sever error"
+                error: "Internal server error"
             });
         }
     }

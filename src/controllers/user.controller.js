@@ -5,43 +5,99 @@ const { createHash, isValidPassword } = require("../utils/hashbcryp.js");
 const UserDTO = require("../dto/user.dto.js");
 const UserRepository= require("../repositories/user.repository.js");
 const userRepository= new UserRepository();
+const CustomError = require("../utils/errors/custom-error.js");
+const generateUserErrorInfo = require("../utils/errors/info.js");
+const EErrors= require("../utils/errors/enum.js");
+
 class UserController {
-    async registerUser(req, res) {//register
-        const { first_name, last_name, email, password, age } = req.body;
-        try {
-            const thisuser = await UserModel.findOne({ email });
-            if (thisuser) {
-                return res.status(400).send("Try another user. This one already exists");
-            }
+    // async registerUser(req, res) {//register
+    //     const { first_name, last_name, email, password, age } = req.body;
+    //     try {
+    //         const thisuser = await UserModel.findOne({ email });
+    //         if (thisuser) {
+    //             return res.status(400).send("Try another user. This one already exists");
+    //         }
     
             
+    //         const newcart = new CartModel();
+    //         await newcart.save();
+    
+    //         const newuser = new UserModel({
+    //             first_name,
+    //             last_name,
+    //             email,
+    //             cart: newcart._id, 
+    //             password: createHash(password),
+    //             age
+    //         });
+    
+    //         await newuser.save();
+    
+    //         const token = jwt.sign({ user: newuser }, "coderhouse", {
+    //             expiresIn: "1h"
+    //         });
+    
+    //         res.cookie("coderCookieToken", token, {
+    //             maxAge: 3600000,
+    //             httpOnly: true
+    //         });
+    
+    //         res.redirect("/api/users/profile");
+    //     } catch (error) {
+    //         console.error(error);
+    //         res.status(500).send("Internal server error");
+    //     }
+    // }
+
+    async registerUser(req, res, next) {
+        const { first_name, last_name, email, password, age } = req.body;
+        try {
+          
+            if (!first_name || !last_name || !email || !password || !age) {
+                throw CustomError.createError({
+                    nname: "User Registration Error",
+                    ccause: generateUserErrorInfo({first_name, last_name, email,password}),
+                    message:"error creating a user",
+                    ccode: EErrors.MISSING_FIELDS
+                });
+            }
+
+            const thisuser = await UserModel.findOne({ email });
+            if (thisuser) {
+                throw CustomError.createError({
+                    name: "DuplicateUserError",
+                    cause: `User with email ${email} already exists`,
+                    message: "User already exists",
+                    code: EErrors.DUPLICATE_USER
+                });
+            }
+
             const newcart = new CartModel();
             await newcart.save();
-    
+
             const newuser = new UserModel({
                 first_name,
                 last_name,
                 email,
-                cart: newcart._id, 
+                cart: newcart._id,
                 password: createHash(password),
                 age
             });
-    
+
             await newuser.save();
-    
+
             const token = jwt.sign({ user: newuser }, "coderhouse", {
                 expiresIn: "1h"
             });
-    
+
             res.cookie("coderCookieToken", token, {
                 maxAge: 3600000,
                 httpOnly: true
             });
-    
+
             res.redirect("/api/users/profile");
         } catch (error) {
-            console.error(error);
-            res.status(500).send("Internal server error");
+            next(error);
         }
     }
     
@@ -70,8 +126,7 @@ class UserController {
     
             res.redirect("/api/users/profile");
         } catch (error) {
-            console.error(error);
-            res.status(500).send("Internal Server error");
+            next(error);
         }
     }
     

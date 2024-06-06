@@ -18,6 +18,7 @@ const viewsRouter = require("./routes/views.router.js");
 const userRouter = require("./routes/user.router.js");
 const mockingproducts= require("./routes/mockingproducts.js");
 const errorHandler= require("./middleware/errorHandler.js");
+const addLogger = require('./utils/logger.js');
 //Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -32,7 +33,7 @@ app.use(cookieParser());
 
 
 app.use(authMiddleware);
-
+app.use(addLogger);
 
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");

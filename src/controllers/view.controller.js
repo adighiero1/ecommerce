@@ -1,7 +1,7 @@
 const ProductModel = require("../models/product.model.js");
 const CartRepository = require("../repositories/cart.repository.js");
 const cartRepository = new CartRepository();
-
+const logger = require("../utils/logger.js");
 class ViewsController {
 
 
@@ -16,8 +16,8 @@ class ViewsController {
                 { $addFields: { id: { $toString: "$_id" } } },
                 { $project: { _id: 0, id: 1, title: 1, description: 1, price: 1, img: 1 } } // Explicitly project required fields
             ]);
-
-            console.log("Fetched products:", products);
+            req.logger.info("Fetched products:", { products});
+            // console.log("Fetched products:", products);
 
             const totalProducts = await ProductModel.countDocuments();
             const totalPages = Math.ceil(totalProducts / limit);
@@ -36,7 +36,8 @@ class ViewsController {
             });
 
         } catch (error) {
-            console.error("Error fetching products", error);
+            // console.error("Error fetching products", error);
+            req.logger.error("Error fetching products", { error });
             res.status(500).json({
                 status: 'error',
                 error: "Internal server error"
@@ -53,7 +54,7 @@ class ViewsController {
             const carrito = await cartRepository.getCartProducts(cartId);
     
             if (!carrito) {
-                console.log("Cart does not exist");
+                req.logger.warn("Cart does not exist", { cartId });
                 return res.status(404).json({ error: "Cart was not found" });
             }
     
@@ -74,22 +75,26 @@ class ViewsController {
     
             res.render("carts", { productos: productosEnCarrito, totalCompra, cartId });
         } catch (error) {
-            console.error("Error getting the cart", error);
+            req.logger.error("Error getting the cart", { error });
+            // console.error("Error getting the cart", error);
             res.status(500).json({ error: "Server Error" });
         }
     }
 
 
     async getLogin(req, res) {
+        req.logger.info("Rendering login page");
         res.render("login");
     }
 
     async getRegister(req, res) {
+        req.logger.info("Rendering register page");
         res.render("register");
     }
 
     async getRealtimeProducts(req, res) {
         try {
+            req.logger.info("Rendering realtime products page");
             res.render("realtimeproducts");
         } catch (error) {
             console.log("Error", error);
@@ -98,6 +103,7 @@ class ViewsController {
     }
 
     async getChat(req, res) {
+        req.logger.info("Rendering chat page");
         res.render("chat");
     }
 

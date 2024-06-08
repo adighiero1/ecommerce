@@ -8,7 +8,8 @@ const cors = require("cors");
 const path = require('path');
 const dotenv = require("dotenv");
 const configObject = require("./config/config.js");
-const {mongo_url, puerto} = configObject; 
+// const {mongo_url, puerto} = configObject; 
+const {mongo_url, puerto, mode} = configObject;  // Include mode here
 const PORT = puerto;
 require("./database.js");
 const authMiddleware = require("./middleware/authmiddleware.js");
@@ -46,7 +47,8 @@ app.set("views", "./src/views");
 app.use("/mockingproducts",mockingproducts);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", userRouter);
-app.use("/", viewsRouter);
+// app.use("/", viewsRouter);
+app.use("/", viewsRouter(mode));
 app.use("/api/products", productsRouter);
 
 app.use(errorHandler);

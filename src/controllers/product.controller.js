@@ -14,6 +14,8 @@ class ProductController {
         }
     }
 
+
+
     async getProducts(req, res) {
         try {
             let { limit = 10, page = 1, sort, query } = req.query;

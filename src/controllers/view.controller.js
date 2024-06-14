@@ -95,7 +95,10 @@ class ViewsController {
     async getRealtimeProducts(req, res) {
         try {
             req.logger.info("Rendering realtime products page");
-            res.render("realtimeproducts");
+            res.render('realtimeproducts', {
+                userRole: req.user.role, // Assuming req.user contains the logged-in user information
+                userEmail: req.user.email // Assuming req.user contains the logged-in user information
+            });
         } catch (error) {
             console.log("Error", error);
             res.status(500).json({ error: "Internal server error" });
@@ -109,6 +112,18 @@ class ViewsController {
 
     async getHome(req, res) {
         res.render("home");
+    }
+
+    async getPasswordChange(req,res){ 
+        res.render("passwordchange");
+    }
+
+    async getPasswordReset(req,res){
+        res.render("passwordreset");
+    }
+
+    async getEmailConfirmation(req,res){
+        res.render("emailconfirmation");
     }
 }
 

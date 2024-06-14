@@ -34,51 +34,44 @@ class CartController {
         }
     }
 
-    // async addProduct(req, res) {
-    //     const cartId = req.params.cid;
-    //     const productId = req.params.pid;
-    //     const quantity = req.body.quantity || 1;
-    //     try {
-    //         await cartRepository.addProduct(cartId, productId, quantity);
-    //         const cartID = (req.user.cart).toString();
-
-    //         res.redirect(`/carts/${cartID}`)
-    //     } catch (error) {
-    //         res.status(500).send("Error");
-    //     }
-    // }
-
-    ////////////////old one that worked/////////////
-    // async addProduct(req, res, next) {
-    //     const cartId = req.params.cid;
-    //     const productId = req.params.pid;
-    //     const quantity = req.body.quantity || 1;
-        
-    //     try {
-    //         if (!cartId || !productId || !quantity) {
-    //             console.log("Generating cart error info...");
-    //             const cartErrorInfo = generateCartErrorInfo(productId, quantity);
-    //             console.log("Cart error info:", cartErrorInfo);
     
-    //             console.log("Throwing custom error...");
-    //             throw CustomError.createError({
-    //                 nname: "Cart Product Addition Error",
-    //                 ccause: cartErrorInfo,
-    //                 message: "Error adding product to cart",
-    //                 ccode: EErrors.CART_MISSING_FIELDS
-    //             });
-    //         }
-    
-    //         await cartRepository.addProduct(cartId, productId, quantity);
-    //         const cartID = (req.user.cart).toString();
-    
-    //         res.redirect(`/carts/${cartID}`);
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // }
 
-    async addProduct(req, res, next) {
+//     async addProduct(req, res, next) {
+//     const cartId = req.params.cid;
+//     const productId = req.params.pid;
+//     const quantity = req.body.quantity || 1;
+    
+//     try {
+//         console.log("Received request to add product:");
+//         console.log("cartId:", cartId);
+//         console.log("productId:", productId);
+//         console.log("quantity:", quantity);
+
+//         if (!cartId || !productId || !quantity) {
+//             console.log("Generating cart error info...");
+//             const cartErrorInfo = generateCartErrorInfo(productId, quantity);
+//             console.log("Cart error info:", cartErrorInfo);
+
+//             console.log("Throwing custom error...");
+//             throw CustomError.createError({
+//                 nname: "Cart Product Addition Error",
+//                 ccause: cartErrorInfo,
+//                 message: "Error adding product to cart",
+//                 ccode: EErrors.CART_MISSING_FIELDS
+//             });
+//         }
+
+//         await cartRepository.addProduct(cartId, productId, quantity);
+//         console.log("Product added successfully to cart.");
+//         const cartID = (req.user.cart).toString();
+//         res.redirect(`/carts/${cartID}`);
+//     } catch (error) {
+//         console.error("Error caught in addProduct method:", error);
+//         next(error);
+//     }
+// }
+
+async addProduct(req, res, next) {
     const cartId = req.params.cid;
     const productId = req.params.pid;
     const quantity = req.body.quantity || 1;
@@ -103,15 +96,31 @@ class CartController {
             });
         }
 
+        // Get the product details
+        const product = await productRepository.getProductById(productId);
+
+        // Check if the user is premium and the product belongs to them
+        if (req.user.role === 'premium' && product.owner === req.user.email) {
+            throw CustomError.createError({
+                name: "Premium User Product Addition Error",
+                message: "Premium users cannot add their own products to the cart",
+                code: EErrors.PREMIUM_USER_PRODUCT_ADDITION_ERROR
+            });
+        }
+
         await cartRepository.addProduct(cartId, productId, quantity);
         console.log("Product added successfully to cart.");
         const cartID = (req.user.cart).toString();
-        res.redirect(`/carts/${cartID}`);
+        return res.redirect(`/carts/${cartID}`);
     } catch (error) {
         console.error("Error caught in addProduct method:", error);
-        next(error);
+        // Redirect back to the previous page
+        return res.redirect('/');
     }
 }
+
+
+
 
     async deleteProduct(req, res) {
         const cartId = req.params.cid;

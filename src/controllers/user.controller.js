@@ -8,7 +8,10 @@ const userRepository= new UserRepository();
 const CustomError = require("../utils/errors/custom-error.js");
 const generateUserErrorInfo = require("../utils/errors/info.js");
 const EErrors= require("../utils/errors/enum.js");
+const tokenGenerator = require("../utils/tokengenerator.js");
+const Email= require("../utils/email.js");
 
+const emailManager= new Email;
 class UserController {
     // async registerUser(req, res) {//register
     //     const { first_name, last_name, email, password, age } = req.body;
@@ -153,12 +156,120 @@ class UserController {
             res.status(500).send("Internal Server Error");
         }
     }
+
+    // async passwordReset(req,res){
+    //     const {token,email,password} = req.body;
+    //     try{
+    //         const user = await UserModel.findOne({email});
+    //         if(!user){
+    //             return res.render("user was not found");
+    //         }
+    //         const passwordToken= user.passwordToken;
+    //         if(token!== passwordToken ||!passwordToken){
+    //             console.log("Error here");
+    //             return res.render("/passwordchange");
+    //         }
+
+    //         const date= new Date();
+    //         if(date>passwordToken.expires){
+    //             return res.redirect("/login");
+    //         }
+
+    //         if (isValidPassword(password, user)) {
+    //             return res.render("passwordchange", { error: "It can't be the same password" });
+    //         }
+            
+    //         user.password= createHash(password);
+    //         user.passwordToken=undefined;
+    //         await user.save();
+
+    //         return res.redirect("/login");
+
+    //     }catch(error){
+    //         console.error(error);
+    //         res.status(500).send("Internal Server Error");
+    //     }
+    // }
+
+    async passwordReset(req, res) {
+        const { token, email, password } = req.body;
+        console.log("Received request:", { token, email, password }); // Log received request data
+    
+        try {
+            const user = await UserModel.findOne({ email });
+            console.log("User found:", user); // Log user found
+    
+            if (!user) {
+                console.log("User not found");
+                return res.render("user was not found");
+            }
+    
+            const passwordToken = user.passwordToken;
+            console.log("User's password token:", passwordToken); // Log user's password token
+    
+            if (!passwordToken) {
+                console.log("Password token not found for user");
+                return res.render("/passwordchange");
+            }
+    
+            if (token !== passwordToken.token) {
+                console.log("Token mismatch");
+                return res.render("/passwordchange");
+            }
+    
+            const date = new Date();
+            console.log("Current date:", date); // Log current date
+            console.log("Token expiry date:", passwordToken.expires); // Log token expiry date
+    
+            if (date > passwordToken.expires) {
+                console.log("Token has expired");
+                return res.redirect("/login");
+            }
+    
+            if (isValidPassword(password, user)) {
+                console.log("New password cannot be the same as the old one");
+                return res.render("passwordchange", { error: "It can't be the same password" });
+            }
+    
+            user.password = createHash(password);
+            user.passwordToken = undefined;
+            await user.save();
+            console.log("Password updated successfully");
+    
+            return res.redirect("/login");
+        } catch (error) {
+            console.error("Error during password reset:", error);
+            res.status(500).send("Internal Server Error");
+        }
+    }
+
+    async resetPasswordRequest(req,res){
+        const {email} = req.body;
+        try{
+            const user = await UserModel.findOne({email});
+            if(!user){
+                return res.status(404).send("User not found");
+            }
+
+            const token= tokenGenerator(8);
+            //to save the token into the user
+            user.passwordToken= {token,expires: new Date(Date.now() + 3600000)};
+            await user.save();
+            await emailManager.resetPassword(email,user.first_name,user.last_name,token);
+            res.redirect("/emailconfirmation");
+    
+    
+
+    }catch(error){
+        console.error(error);
+        res.status(500).send("Error interno del servidor");
+    }
     
 
 }
 
 
-
+}
 
 
 

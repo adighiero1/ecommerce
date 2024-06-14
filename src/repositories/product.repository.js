@@ -1,7 +1,7 @@
 const ProductModel = require("../models/product.model.js");
 
 class ProductRepository {
-    async addProduct({ title, description, price, img, code, stock, category, thumbnails }) {
+    async addProduct({ title, description, price, img, code, stock, category, thumbnails,owner }) {
         try {
             if (!title || !description || !price || !code || !stock || !category) {
                 console.log("Missing fields");
@@ -24,7 +24,8 @@ class ProductRepository {
                 stock,
                 category,
                 status: true,
-                thumbnails: thumbnails || []
+                thumbnails: thumbnails || [],
+                owner
             });
 
             await newProduct.save();
@@ -32,7 +33,7 @@ class ProductRepository {
             return newProduct;
 
         } catch (error) {
-            throw new Error("Error");
+            throw new Error("Error addomg product!");
         }
     }
 
@@ -95,7 +96,7 @@ class ProductRepository {
             console.log("Product found.");
             return product;
         } catch (error) {
-            throw new Error("Error");
+            throw new Error("Error obtaining product by it's id.");
         }
     }
 

@@ -23,6 +23,10 @@ class UserRepository {
           throw error; // Re-throw the error to be caught by the controller
         }
       }
+      async updateUser(userId, updateData) {
+        return await User.findByIdAndUpdate(userId, updateData, { new: true });
+    }
+
     }
 
 

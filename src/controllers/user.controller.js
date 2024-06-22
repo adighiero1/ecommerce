@@ -10,7 +10,7 @@ const generateUserErrorInfo = require("../utils/errors/info.js");
 const EErrors= require("../utils/errors/enum.js");
 const tokenGenerator = require("../utils/tokengenerator.js");
 const Email= require("../utils/email.js");
-
+const User = require('../models/user.model.js'); // Adjust the path as necessary
 const emailManager= new Email;
 class UserController {
     // async registerUser(req, res) {//register
@@ -266,6 +266,54 @@ class UserController {
     }
     
 
+}
+
+// async changeRole(req, res) {
+//     const userId = req.params.userId;
+//     try {
+//         // Find the user by ID
+//         const user = await User.findById(userId);
+
+//         // Check if user exists
+//         if (!user) {
+//             return res.status(404).json({ error: 'User not found' });
+//         }
+
+//         // Change the role
+//         user.role = user.role === 'user' ? 'premium' : 'user';
+
+//         // Save the updated user
+//         await user.save();
+
+//         return res.status(200).json({ message: 'User role updated successfully', user });
+//     } catch (error) {
+//         console.error('Error updating user role:', error);
+//         return res.status(500).json({ error: 'Internal server error' });
+//     }
+// }
+
+async changeMyRole(req, res) {
+    try {
+        const userId = req.user._id; // Assuming the user ID is available in the JWT payload
+        const newRole = req.body.role;
+
+        if (!newRole || (newRole !== 'user' && newRole !== 'premium')) {
+            return res.status(400).json({ success: false, message: 'Invalid role provided' });
+        }
+
+        // Logic to update the user's role in the database
+        const updatedUser = await User.findByIdAndUpdate(userId, { role: newRole }, { new: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        
+        res.redirect('/api/users/profile');
+    } catch (error) {
+        console.error('Error changing role:', error); // Log the detailed error
+        res.status(500).json({ success: false, message: 'Error changing role' });
+    }
 }
 
 

@@ -49,7 +49,9 @@ const ViewsController = require("../controllers/view.controller.js");
 const viewsController = new ViewsController();
 const checkUserRole = require("../middleware/checkrole.js");
 const passport = require("passport");
-
+const SwaggerConfig = require("../controllers/swagger.controller.js");
+const swaggerConfig = new SwaggerConfig();
+swaggerConfig.setup(router);
 module.exports = (mode) => {
     router.get("/carts/:cid", viewsController.getCart);
     router.get("/login", viewsController.getLogin);
@@ -63,6 +65,7 @@ module.exports = (mode) => {
     router.get("/passwordreset",viewsController.getPasswordReset);
     router.get("/emailconfirmation",viewsController.getEmailConfirmation);
     router.get("/passwordchange",viewsController.getPasswordChange);
+    router.get("/rolechange",viewsController.getChangeRole);
 
     router.get("/loggerTest", (req, res) => {
         const logger = req.logger;

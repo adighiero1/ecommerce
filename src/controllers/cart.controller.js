@@ -34,42 +34,7 @@ class CartController {
         }
     }
 
-    
 
-//     async addProduct(req, res, next) {
-//     const cartId = req.params.cid;
-//     const productId = req.params.pid;
-//     const quantity = req.body.quantity || 1;
-    
-//     try {
-//         console.log("Received request to add product:");
-//         console.log("cartId:", cartId);
-//         console.log("productId:", productId);
-//         console.log("quantity:", quantity);
-
-//         if (!cartId || !productId || !quantity) {
-//             console.log("Generating cart error info...");
-//             const cartErrorInfo = generateCartErrorInfo(productId, quantity);
-//             console.log("Cart error info:", cartErrorInfo);
-
-//             console.log("Throwing custom error...");
-//             throw CustomError.createError({
-//                 nname: "Cart Product Addition Error",
-//                 ccause: cartErrorInfo,
-//                 message: "Error adding product to cart",
-//                 ccode: EErrors.CART_MISSING_FIELDS
-//             });
-//         }
-
-//         await cartRepository.addProduct(cartId, productId, quantity);
-//         console.log("Product added successfully to cart.");
-//         const cartID = (req.user.cart).toString();
-//         res.redirect(`/carts/${cartID}`);
-//     } catch (error) {
-//         console.error("Error caught in addProduct method:", error);
-//         next(error);
-//     }
-// }
 
 async addProduct(req, res, next) {
     const cartId = req.params.cid;

@@ -125,6 +125,10 @@ class ViewsController {
     async getEmailConfirmation(req,res){
         res.render("emailconfirmation");
     }
+
+    async getChangeRole(req,res){
+        res.render("rolechange", { user: req.user });
+    }
 }
 
 module.exports = ViewsController;

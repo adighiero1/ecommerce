@@ -11,6 +11,7 @@ router.get("/profile", passport.authenticate("jwt", { session: false }), userCon
 router.post("/logout", userController.userLogout);
 router.post("/passwordreset",userController.resetPasswordRequest);
 router.post("/resetpassword",userController.passwordReset);
-
+// router.patch("/change-my-role", passport.authenticate("jwt", { session: false }), userController.changeMyRole);
+router.post("/change-my-role", passport.authenticate("jwt", { session: false }), userController.changeMyRole); // Changed to POST
 module.exports = router;
 

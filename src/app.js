@@ -20,6 +20,9 @@ const userRouter = require("./routes/user.router.js");
 const mockingproducts= require("./routes/mockingproducts.js");
 const errorHandler= require("./middleware/errorHandler.js");
 const addLogger = require('./utils/logger.js');
+const SwaggerConfig = require("./controllers/swagger.controller.js");
+const swaggerConfig = new SwaggerConfig();
+
 //Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -52,7 +55,7 @@ app.use("/", viewsRouter(mode));
 app.use("/api/products", productsRouter);
 
 app.use(errorHandler);
-
+swaggerConfig.setup(app);
 const httpServer = app.listen(PORT, () => {
     console.log(`Server listening at Port: ${PORT}`);
 });

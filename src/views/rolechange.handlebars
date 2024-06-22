@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change My Role</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Include your stylesheets here -->
+</head>
+<body>
+    <header>
+        <!-- Include your header here -->
+    </header>
+    
+    <main>
+        <h1>Change My Role</h1>
+        <form action="/api/users/change-my-role" method="POST">
+            <label for="role">Select new role:</label>
+            <select name="role" id="role">
+                <option value="user">User</option>
+                <option value="premium">Premium</option>
+            </select>
+            <button type="submit">Change Role</button>
+        </form>
+    </main>
+    
+    <footer>
+        <!-- Include your footer here -->
+    </footer>
+</body>
+</html>

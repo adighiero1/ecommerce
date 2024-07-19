@@ -117,7 +117,11 @@ class UserController {
             if (!esValido) {
                 return res.status(401).send("Password was not correct");
             }
-    
+            
+                    // Update last_connection field
+             found.last_connection = new Date();
+             await found.save();
+
             const token = jwt.sign({ user: found }, "coderhouse", {
                 expiresIn: "1h"
             });
@@ -140,11 +144,37 @@ class UserController {
         res.render("profile", { user: userInfo, admin });
     }
     
-    async userLogout(req, res) {
-        res.clearCookie("coderCookieToken");
-        res.redirect("/login");
-    }
+    // async userLogout(req, res) {
+    //     res.clearCookie("coderCookieToken");
+    //     res.redirect("/login");
+    // }
     
+    async  userLogout(req, res, next) {
+        try {
+            const token = req.cookies.coderCookieToken;
+            if (!token) {
+                return res.redirect("/login");
+            }
+    
+            // Decode the token to get the user's information
+            const decoded = jwt.verify(token, "coderhouse");
+            const userId = decoded.user._id;
+    
+            // Find the user by ID and update the last_connection field
+            const user = await UserModel.findById(userId);
+            if (user) {
+                user.last_connection = new Date();
+                await user.save();
+            }
+    
+            // Clear the cookie and redirect
+            res.clearCookie("coderCookieToken");
+            res.redirect("/login");
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async isadmin(req, res) {
         try {
             if (!req.user || req.user.role !== "admin") {

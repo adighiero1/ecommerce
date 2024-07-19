@@ -39,7 +39,25 @@ const userSchema = mongoose.Schema({
     passwordToken:{
         token:String,
         expires: Date
-    }
+    }, documents: [
+        {
+            name: {
+                type: String,
+                required: true,
+            },
+            reference: {
+                type: String,
+                required: true,
+            },
+        },
+    ], last_connection: {
+        type: Date,
+    },
+}, {
+    timestamps: true,
+
+    
+
 });
 
 const UserModel = mongoose.model("user", userSchema);

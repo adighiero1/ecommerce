@@ -13,44 +13,6 @@ const Email= require("../utils/email.js");
 const User = require('../models/user.model.js'); // Adjust the path as necessary
 const emailManager= new Email;
 class UserController {
-    // async registerUser(req, res) {//register
-    //     const { first_name, last_name, email, password, age } = req.body;
-    //     try {
-    //         const thisuser = await UserModel.findOne({ email });
-    //         if (thisuser) {
-    //             return res.status(400).send("Try another user. This one already exists");
-    //         }
-    
-            
-    //         const newcart = new CartModel();
-    //         await newcart.save();
-    
-    //         const newuser = new UserModel({
-    //             first_name,
-    //             last_name,
-    //             email,
-    //             cart: newcart._id, 
-    //             password: createHash(password),
-    //             age
-    //         });
-    
-    //         await newuser.save();
-    
-    //         const token = jwt.sign({ user: newuser }, "coderhouse", {
-    //             expiresIn: "1h"
-    //         });
-    
-    //         res.cookie("coderCookieToken", token, {
-    //             maxAge: 3600000,
-    //             httpOnly: true
-    //         });
-    
-    //         res.redirect("/api/users/profile");
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).send("Internal server error");
-    //     }
-    // }
 
     async registerUser(req, res, next) {
         const { first_name, last_name, email, password, age } = req.body;
@@ -187,39 +149,6 @@ class UserController {
         }
     }
 
-    // async passwordReset(req,res){
-    //     const {token,email,password} = req.body;
-    //     try{
-    //         const user = await UserModel.findOne({email});
-    //         if(!user){
-    //             return res.render("user was not found");
-    //         }
-    //         const passwordToken= user.passwordToken;
-    //         if(token!== passwordToken ||!passwordToken){
-    //             console.log("Error here");
-    //             return res.render("/passwordchange");
-    //         }
-
-    //         const date= new Date();
-    //         if(date>passwordToken.expires){
-    //             return res.redirect("/login");
-    //         }
-
-    //         if (isValidPassword(password, user)) {
-    //             return res.render("passwordchange", { error: "It can't be the same password" });
-    //         }
-            
-    //         user.password= createHash(password);
-    //         user.passwordToken=undefined;
-    //         await user.save();
-
-    //         return res.redirect("/login");
-
-    //     }catch(error){
-    //         console.error(error);
-    //         res.status(500).send("Internal Server Error");
-    //     }
-    // }
 
     async passwordReset(req, res) {
         const { token, email, password } = req.body;
@@ -346,8 +275,73 @@ async changeMyRole(req, res) {
     }
 }
 
+    async uploadDocuments(req, res, next) {
+        const uploadDocuments = multer.array('documents', 10); // Up to 10 documents
 
+        uploadDocuments(req, res, async (err) => {
+            if (err) {
+                return next(err);
+            }
+
+            const { uid } = req.params;
+
+            try {
+                const user = await UserModel.findById(uid);
+
+                if (!user) {
+                    return res.status(404).send('User not found');
+                }
+
+                const newDocuments = req.files.map(file => ({
+                    name: file.originalname,
+                    reference: `/uploads/${file.destination.split('/').pop()}/${file.filename}`
+                }));
+
+                user.documents = [...user.documents, ...newDocuments];
+                await user.save();
+
+                res.status(200).send('Documents uploaded successfully');
+            } catch (error) {
+                next(error);
+            }
+        });
+
+        
+
+
+    }
+
+    async changeRoleToPremium(req, res, next) {
+        const { uid } = req.params;
+
+        try {
+            const user = await UserModel.findById(uid);
+
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+
+            const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+
+            const hasAllDocuments = requiredDocuments.every(doc =>
+                user.documents.some(userDoc => userDoc.name === doc)
+            );
+
+            if (!hasAllDocuments) {
+                return res.status(400).send('User must upload all required documents to become premium');
+            }
+
+            user.role = 'premium';
+            await user.save();
+
+            res.status(200).send('User role updated to premium');
+        } catch (error) {
+            next(error);
+        }
+    }
 }
+
+
 
 
 

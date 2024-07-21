@@ -275,41 +275,104 @@ async changeMyRole(req, res) {
     }
 }
 
-    async uploadDocuments(req, res, next) {
-        const uploadDocuments = multer.array('documents', 10); // Up to 10 documents
+// async uploadDocuments(req, res, next) {
+//     try {
+//         console.log("uploadDocuments called");
 
-        uploadDocuments(req, res, async (err) => {
-            if (err) {
-                return next(err);
-            }
+//         // Log the user ID
+//         const uid = req.user._id;
+//         console.log("UserID:", uid);
 
-            const { uid } = req.params;
+//         // Log the request files
+//         console.log("Files in request:", req.files);
 
-            try {
-                const user = await UserModel.findById(uid);
+//         // Check if files are properly populated
+//         if (!req.files || req.files.length === 0) {
+//             console.log("No files uploaded or files are not populated correctly.");
+//             return res.status(400).json({ status: 'error', error: 'No files uploaded' });
+//         }
 
-                if (!user) {
-                    return res.status(404).send('User not found');
-                }
+//         // Find user by UID
+//         const user = await UserModel.findById(uid);
+//         if (!user) {
+//             console.log("User not found");
+//             return res.status(404).json({ status: 'error', error: 'User not found' });
+//         }
 
-                const newDocuments = req.files.map(file => ({
-                    name: file.originalname,
-                    reference: `/uploads/${file.destination.split('/').pop()}/${file.filename}`
-                }));
+//         // Log user details
+//         console.log("User found:", user);
 
-                user.documents = [...user.documents, ...newDocuments];
-                await user.save();
+//         // Prepare and save the uploaded documents
+//         const documents = req.files.map(file => ({
+//             name: file.originalname,
+//             reference: file.path
+//         }));
 
-                res.status(200).send('Documents uploaded successfully');
-            } catch (error) {
-                next(error);
-            }
-        });
+//         // Log documents to be saved
+//         console.log("Documents to save:", documents);
 
-        
+//         user.documents.push(...documents);
+//         await user.save();
 
+//         console.log("Documents uploaded successfully");
+//         res.status(200).json({ status: 'success', message: 'Files uploaded successfully' });
+//     } catch (error) {
+//         console.log("Error uploading documents:", error);
+//         res.status(500).json({ status: 'error', error: 'Unknown error' });
+//     }
+// }
 
+async uploadDocuments(req, res, next) {
+    try {
+        console.log("uploadDocuments called");
+
+        // Log the user ID
+        const uid = req.user._id;
+        console.log("UserID:", uid);
+        const documents= req.files.documents;
+        // Log the request files
+        console.log("Files in request:", documents);
+
+        // Check if files are properly populated
+    
+       if (!documents || documents.length === 0) {
+        console.log("No files uploaded or files are not populated correctly.");
+        return res.status(400).json({ status: 'error', error: 'No files uploaded' });
     }
+
+        // Find user by UID
+        const user = await UserModel.findById(uid);
+        if (!user) {
+            console.log("User not found");
+            return res.status(404).json({ status: 'error', error: 'User not found' });
+        }
+
+        // Log user details
+        console.log("User found:", user);
+
+        // Prepare and save the uploaded documents
+       const savedDocuments= documents.map(file => ({
+            name: file.originalname,
+            reference: file.path
+        }));
+
+        // Log documents to be saved
+        console.log("Documents to save:", savedDocuments);
+
+        user.documents.push(...savedDocuments);
+        await user.save();
+
+        console.log("Documents uploaded successfully");
+        
+        res.redirect('/api/users/profile');
+    } catch (error) {
+        console.log("Error uploading documents:", error);
+        res.status(500).json({ status: 'error', error: 'Unknown error' });
+    }
+}
+
+
+
 
     async changeRoleToPremium(req, res, next) {
         const { uid } = req.params;

@@ -1,19 +1,52 @@
-// File: middleware/multer.js
-const multer = require('multer');
-const path = require('path');
+// const multer = require("multer"); 
+
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         let destinationFolder; 
+//         switch(file.fieldname) {
+//             case "profile": 
+//                 destinationFolder = "./src/uploads/profiles";
+//                 break; 
+//             case "products": 
+//                 destinationFolder = "./src/uploads/products";
+//                 break; 
+//             case "document": 
+//                 destinationFolder = "./src/uploads/documents"
+//         }
+//         cb(null, destinationFolder); 
+//     }, 
+//     filename: (req, file, cb) => {
+//         cb(null, file.originalname); 
+//     }
+// })
+
+// const upload = multer({storage:storage}); 
+
+// module.exports = upload; 
+
+const multer = require("multer");
+const path = require("path");
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        let folder = 'documents'; // Default folder
-        if (file.fieldname === 'profileImage') {
-            folder = 'profiles';
-        } else if (file.fieldname === 'productImage') {
-            folder = 'products';
+    destination: (req, file, cb) => {
+        let destinationFolder;
+        switch(file.fieldname) {
+            case "profile":
+                destinationFolder = path.join(__dirname, "../uploads/profiles");
+                break;
+            case "products":
+                destinationFolder = path.join(__dirname, "../uploads/products");
+                break;
+            case "documents":
+                destinationFolder = path.join(__dirname, "../uploads/documents");
+                break;
+            default:
+                return cb(new Error("Invalid fieldname"));
         }
-        cb(null, path.join(__dirname, '..', 'uploads', folder));
+        cb(null, destinationFolder);
     },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Append the file extension
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
 

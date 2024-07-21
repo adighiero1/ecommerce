@@ -1,0 +1,25 @@
+<!-- File: views/uploadDocuments.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Documents</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link to your stylesheet -->
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Documents</h1>
+        <form action="/api/users/{{userId}}/documents" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="documents">Select Documents:</label>
+                <input type="file" name="documents" id="documents" multiple>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+        <script>
+            console.log("User ID:", "{{userId}}");
+        </script>
+    </div>
+</body>
+</html>

@@ -110,6 +110,13 @@ class ViewsController {
         res.render("chat");
     }
 
+    async getDocuments(req,res){
+        const uid = req.user._id;
+        console.log("Received UID:", uid);
+        req.logger.info("Rendering documents page");
+        res.render("uploaddocuments",{userId:uid});
+    }
+
     async getHome(req, res) {
         res.render("home");
     }

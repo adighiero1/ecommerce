@@ -1,0 +1,134 @@
+coder.uem1fa
+
+async deleteProduct(){
+  try{
+    const products = await this.readProducts();
+        const index = products.findIndex(product => product.id === id);
+        if(index !== -1){
+          products[index].slice();
+          await this.saveProducts(products);
+          console.log(`Product with ID ${id} deleted successfully.`);
+          console.log(products[index]);
+          return products[index];
+        }else{
+          console.error("Product not found for deletion");
+          return null;
+        }
+  }
+  
+  catch(error){
+    console.error("Error deleting product",error);
+    return null;
+  }
+}
+
+
+
+
+
+
+// const fs = require("fs").promises;
+
+// class ProductManager {
+//     constructor(filePath) {
+//         this.path = filePath;
+//         this.products = [];
+//     }
+
+//     async addProduct(productData) {
+//         try {
+//             const products = await this.getProductsFromFile();
+//             const newProduct = {
+//                 id: this.generateId(),
+//                 ...productData
+//             };
+//             products.push(newProduct);
+//             await this.saveProductsToFile(products);
+//             return newProduct;
+//         } catch (error) {
+//             console.error("Error adding product:", error);
+//             return null;
+//         }
+//     }
+
+//     async getProducts() {
+//         try {
+//             return await this.getProductsFromFile();
+//         } catch (error) {
+//             console.error("Error getting products:", error);
+//             return [];
+//         }
+//     }
+
+//     async getProductById(productId) {
+//         try {
+//             const products = await this.getProductsFromFile();
+//             return products.find(product => product.id === productId);
+//         } catch (error) {
+//             console.error("Error getting product by ID:", error);
+//             return null;
+//         }
+//     }
+
+//     async updateProduct(productId, updatedProductData) {
+//         try {
+//             let products = await this.getProductsFromFile();
+//             const index = products.findIndex(product => product.id === productId);
+//             if (index !== -1) {
+//                 products[index] = { id: productId, ...updatedProductData };
+//                 await this.saveProductsToFile(products);
+//                 return products[index];
+//             } else {
+//                 console.error("Product not found for updating");
+//                 return null;
+//             }
+//         } catch (error) {
+//             console.error("Error updating product:", error);
+//             return null;
+//         }
+//     }
+
+//     async deleteProduct(productId) {
+//         try {
+//             let products = await this.getProductsFromFile();
+//             products = products.filter(product => product.id !== productId);
+//             await this.saveProductsToFile(products);
+//             return true;
+//         } catch (error) {
+//             console.error("Error deleting product:", error);
+//             return false;
+//         }
+//     }
+
+//     async getProductsFromFile() {
+//         try {
+//             const data = await fs.readFile(this.path, "utf-8");
+//             return JSON.parse(data);
+//         } catch (error) {
+//             console.error("Error reading products from file:", error);
+//             return [];
+//         }
+//     }
+
+//     async saveProductsToFile(products) {
+//         try {
+//             await fs.writeFile(this.path, JSON.stringify(products, null, 2));
+//         } catch (error) {
+//             console.error("Error saving products to file:", error);
+//         }
+//     }
+
+//     generateId() {
+//         // This can be replaced with a more sophisticated ID generation logic
+//         return Math.floor(Math.random() * 1000000);
+//     }
+// }
+
+
+// productMangaer= new ProductManager("products");
+
+
+// productMangaer.addProduct("Laptop", "Powerful laptop for professional use", 1200, "laptop.jpg", "LP001", 50);
+
+
+

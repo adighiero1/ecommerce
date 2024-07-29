@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .checkout {
+      margin: 3rem auto;
+      max-width: 600px;
+      padding: 2rem;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: .25rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .checkout h1 {
+      margin-bottom: 1.5rem;
+      color: #343a40;
+      text-align: center;
+    }
+    .card {
+      margin-top: 1.5rem;
+    }
+    .card-title {
+      font-weight: bold;
+      color: #007bff;
+    }
+    .card-text {
+      font-size: 1.1rem;
+      color: #6c757d;
+    }
+    .btn-primary {
+      margin-top: 1rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="checkout">
+      <h1>Checkout</h1>
+      {{#if ticket}}
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Order Code: {{ticket.code}}</h5>
+            <p class="card-text">Purchase Date: {{ticket.purchase_datetime}}</p>
+            <p class="card-text">Total Amount: ${{ticket.amount}}</p>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="window.print()">Print Ticket</button>
+      {{else}}
+        <p>No ticket information available</p>
+      {{/if}}
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

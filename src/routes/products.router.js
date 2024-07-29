@@ -8,6 +8,6 @@ router.delete("/:pid", productController.deleteProduct);
 router.get("/", productController.getProducts);
 router.get("/:pid", productController.getProductById);
 router.post("/", productController.addProduct);
-
+router.get('/search', productController.searchProducts);
 
 module.exports = router;

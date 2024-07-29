@@ -1,5 +1,6 @@
 const ProductModel = require("../models/product.model.js");
-
+const Email= require("../utils/email.js");
+const emailService = new Email();
 class ProductRepository {
     async addProduct({ title, description, price, img, code, stock, category, thumbnails,owner }) {
         try {
@@ -115,20 +116,57 @@ class ProductRepository {
         }
     }
 
+    // async deleteProduct(id) {
+    //     try {
+    //         const deletedproduct = await ProductModel.findByIdAndDelete(id);
+
+    //         if (!deletedproduct) {
+    //             console.log("The product was not found for deletion.");
+    //             return null;
+    //         }
+    //         console.log("Product deleted.");
+    //         return deletedproduct;
+    //     } catch (error) {
+    //         throw new Error("Error");
+    //     }
+    // }
+
     async deleteProduct(id) {
         try {
-            const deletedproduct = await ProductModel.findByIdAndDelete(id);
+            const deletedProduct = await ProductModel.findByIdAndDelete(id);
 
-            if (!deletedproduct) {
+            if (!deletedProduct) {
                 console.log("The product was not found for deletion.");
                 return null;
             }
+
             console.log("Product deleted.");
-            return deletedproduct;
+
+            // Send email notification
+            if (deletedProduct.owner) {
+                await emailService.productDeleted(deletedProduct.owner, deletedProduct.title);
+            }
+
+            return deletedProduct;
         } catch (error) {
-            throw new Error("Error");
+            throw new Error("Error deleting product!");
         }
     }
+
+    async searchProducts(query) {
+        try {
+            const products = await ProductModel.find({
+                $or: [
+                    { title: { $regex: query, $options: 'i' } },
+                    { description: { $regex: query, $options: 'i' } }
+                ]
+            });
+            return products;
+        } catch (error) {
+            throw new Error("Error searching products!");
+        }
+    }
+
 }
 
 module.exports = ProductRepository;

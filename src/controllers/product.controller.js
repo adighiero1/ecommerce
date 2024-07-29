@@ -1,6 +1,7 @@
 const ProductRepository = require("../repositories/product.repository.js");
 const productRepository = new ProductRepository();
-
+const Email= require("../utils/email.js");
+const emailService = new Email();
 class ProductController {
 
     async addProduct(req, res) {
@@ -56,15 +57,29 @@ class ProductController {
     }
 
     async deleteProduct(req, res) {
+        console.log("hello this is triggered");
         const id = req.params.pid;
         try {
             let producttodelete = await productRepository.deleteProduct(id);
-
+            
+            await emailService.productDeleted(producttodelete.owner, producttodelete.title);
             res.json(producttodelete);
         } catch (error) {
             res.status(500).send("Error deleting product");
         }
     }
+
+    async searchProducts  (req, res) {
+        try {
+            const query = req.query.query; // Get the search query from the URL
+            const products = await productRepository.searchProducts(query);
+    
+            res.render('products', { products });
+        } catch (error) {
+            console.error('Error searching products:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    };
 }
 
 module.exports = ProductController; 

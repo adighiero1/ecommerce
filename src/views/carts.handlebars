@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,44 +6,107 @@
     <title>Your Cart</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+            color: #495057; /* Darker text color for better readability */
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
         .cart-title {
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #343a40; /* Darker color for the title */
         }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            height: 300px; /* Fixed height for the card */
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            overflow: hidden; /* Ensures content doesn't overflow */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Distributes space evenly */
+        }
+
         .card-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: bold;
+            margin-bottom: 0.5rem;
         }
+
         .card-text {
             font-size: 1rem;
+            margin-bottom: 0.5rem;
         }
+
         .btn-danger {
-            margin-top: 10px;
+            border-radius: 0.3rem;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker red on hover */
+            border-color: #bd2130;
+        }
+
+        .total-section, .checkout-section {
+            margin-top: 30px;
+        }
+
+        .total-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .checkout-section {
+            text-align: center;
+        }
+
+        .checkout-section .btn-danger {
+            font-size: 1.25rem;
+            padding: 0.75rem 1.5rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center cart-title">Cart </h1>
+        <h1 class="text-center cart-title">Your Cart</h1>
 
         <div class="row">
             {{#each productos}}
-            <div class="col-md-4">
-                <div class="card mb-3">
+            <div class="col-md-4 mb-4">
+                <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Product: {{this.product.title}}</h5>
                         <p class="card-text">Quantity: {{this.quantity}}</p>
                         <p class="card-text">Price: ${{this.product.totalPrice}}</p>
-                        <button onclick="deleteProduct('{{this.cartId}}', '{{this.product._id}}')" class="btn btn-danger">Delete</button>
+                        <button onclick="deleteProduct('{{this.cartId}}', '{{this.product._id}}')" class="btn btn-danger w-100">Delete</button>
                     </div>
                 </div>
             </div>
             {{/each}}
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="total-section d-flex justify-content-between align-items-center">
             <button onclick="emptyCart('{{cartId}}')" class="btn btn-danger">Empty Cart</button>
-            <h3 class="mt-2">Total: ${{totalCompra}}</h3>
+            <h3>Total: ${{totalCompra}}</h3>
+        </div>
+
+        <div class="checkout-section mt-4">
+            <button onclick="checkOut('{{cartId}}')" class="btn btn-danger">Checkout</button>
         </div>
     </div>
 
@@ -78,6 +140,27 @@
                 console.error('Error:', error);
             });
         }
+
+       function checkOut(cartId) {
+    console.log('Initiating checkout for cart:', cartId);
+    fetch(`/api/carts/${cartId}/checkout`, {
+        method: 'POST'
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error('Error during checkout');
+        }
+        return response.json(); // Parse the response JSON to get the ticket code
+    })
+    .then(data => {
+        console.log('Redirecting to checkout page with code:', data.code);
+        window.location.href = `/checkout/${data.code}`;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
     </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

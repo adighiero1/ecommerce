@@ -86,7 +86,10 @@ class ViewsController {
         req.logger.info("Rendering login page");
         res.render("login");
     }
-
+    async getCheckout(req,res){
+        req.logger.info("Rendering checkout page");
+        res.render("/checkout");   
+    }
     async getRegister(req, res) {
         req.logger.info("Rendering register page");
         res.render("register");

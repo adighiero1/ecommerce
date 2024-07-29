@@ -27,6 +27,7 @@ const swaggerConfig = new SwaggerConfig();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('*/images', express.static('src/public/images'));
 app.use(cors());
 
 
@@ -39,7 +40,15 @@ app.use(cookieParser());
 app.use(authMiddleware);
 app.use(addLogger);
 
-app.engine("handlebars", exphbs.engine());
+// app.engine("handlebars", exphbs.engine());
+
+const hbs = exphbs.create({
+    helpers: {
+        eq: (a, b) => a === b
+    }
+});
+app.engine('handlebars', hbs.engine);
+
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 

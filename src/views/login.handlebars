@@ -1,6 +1,6 @@
 
 
-
+{{!-- 
 <h2>Login here!</h2>
 
 <form action="/api/users/login" method="POST">
@@ -18,4 +18,119 @@
 
 <br>
 
-<a href="/api/sessions/github"> GitHub </a>
+<a href="/api/sessions/github"> GitHub </a> --}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin-top: 100px; /* Ensure there's space for the header */
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-primary {
+            width: 100%;
+        }
+        .register-link, .social-login {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .social-login a {
+            text-decoration: none;
+        }
+        .social-login a:hover {
+            text-decoration: underline;
+        }
+        header, footer {
+            width: 100%;
+            background-color: #343a40;
+            color: #f8f9fa;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .carousel-inner img {
+            width: 100%; /* Ensure the image takes up the full width of its container */
+            height: 400px; /* Let the height adjust automatically based on the image aspect ratio */
+            object-fit: contain; /* Scale the image down to fit without distortion */
+        }
+        .encabezado .navbar-nav .nav-item .nav-link {
+            color: white;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+        .encabezado .navbar-nav .nav-item .nav-link:hover {
+            color: #d4d4d4;
+        }
+        .encabezado .navbar-brand {
+            color: white;
+            font-weight: bold;
+        }
+        .welcome-message {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .welcome-message h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .welcome-message p {
+            font-size: 1.25rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Header -->
+   
+    <!-- Login Container -->
+    <div style="margin-left:630px;" class="login-container">
+        <h2 class="text-center">Login here!</h2>
+        <form action="/api/users/login" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+        <div class="register-link">
+            <p>Don't have an account? <a href="/register">Register</a></p>
+        </div>
+        <div class="social-login">
+            <p>Or login with:</p>
+            <a href="/api/sessions/github" class="btn btn-outline-dark w-100">GitHub</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome for social icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>
+</html>

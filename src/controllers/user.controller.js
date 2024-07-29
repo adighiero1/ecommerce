@@ -13,6 +13,7 @@ const Email= require("../utils/email.js");
 const User = require('../models/user.model.js'); // Adjust the path as necessary
 const emailManager= new Email;
 class UserController {
+    
 
     async registerUser(req, res, next) {
         const { first_name, last_name, email, password, age } = req.body;
@@ -227,29 +228,6 @@ class UserController {
 
 }
 
-// async changeRole(req, res) {
-//     const userId = req.params.userId;
-//     try {
-//         // Find the user by ID
-//         const user = await User.findById(userId);
-
-//         // Check if user exists
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-
-//         // Change the role
-//         user.role = user.role === 'user' ? 'premium' : 'user';
-
-//         // Save the updated user
-//         await user.save();
-
-//         return res.status(200).json({ message: 'User role updated successfully', user });
-//     } catch (error) {
-//         console.error('Error updating user role:', error);
-//         return res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
 
 async changeMyRole(req, res) {
     try {
@@ -275,52 +253,6 @@ async changeMyRole(req, res) {
     }
 }
 
-// async uploadDocuments(req, res, next) {
-//     try {
-//         console.log("uploadDocuments called");
-
-//         // Log the user ID
-//         const uid = req.user._id;
-//         console.log("UserID:", uid);
-
-//         // Log the request files
-//         console.log("Files in request:", req.files);
-
-//         // Check if files are properly populated
-//         if (!req.files || req.files.length === 0) {
-//             console.log("No files uploaded or files are not populated correctly.");
-//             return res.status(400).json({ status: 'error', error: 'No files uploaded' });
-//         }
-
-//         // Find user by UID
-//         const user = await UserModel.findById(uid);
-//         if (!user) {
-//             console.log("User not found");
-//             return res.status(404).json({ status: 'error', error: 'User not found' });
-//         }
-
-//         // Log user details
-//         console.log("User found:", user);
-
-//         // Prepare and save the uploaded documents
-//         const documents = req.files.map(file => ({
-//             name: file.originalname,
-//             reference: file.path
-//         }));
-
-//         // Log documents to be saved
-//         console.log("Documents to save:", documents);
-
-//         user.documents.push(...documents);
-//         await user.save();
-
-//         console.log("Documents uploaded successfully");
-//         res.status(200).json({ status: 'success', message: 'Files uploaded successfully' });
-//     } catch (error) {
-//         console.log("Error uploading documents:", error);
-//         res.status(500).json({ status: 'error', error: 'Unknown error' });
-//     }
-// }
 
 async uploadDocuments(req, res, next) {
     try {
@@ -371,9 +303,6 @@ async uploadDocuments(req, res, next) {
     }
 }
 
-
-
-
     async changeRoleToPremium(req, res, next) {
         const { uid } = req.params;
 
@@ -402,6 +331,50 @@ async uploadDocuments(req, res, next) {
             next(error);
         }
     }
+
+    async getUsers(req,res){
+        try {
+            const users = await userRepository.getAllUsers();
+            const plainUsers = users.map(user => user.toObject());
+            res.render('users', { plainUsers });
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    async cleanupInactiveUsers(req, res, next) {
+        try {
+            const now = new Date();
+            const twoDaysAgo = new Date(now.getTime() -24 * 60 * 60 * 1000);
+
+            console.log(`Current time: ${now}`);
+            console.log(`Cutoff date: ${twoDaysAgo}`);
+
+            const inactiveUsers = await UserRepository.findInactiveSince(twoDaysAgo);
+            console.log(`Inactive users: ${JSON.stringify(inactiveUsers, null, 2)}`);
+
+            if (inactiveUsers.length > 0) {
+                const deletedUsers = await UserRepository.deleteUsersByIds(
+                    inactiveUsers.map(user => user._id)
+                );
+                console.log(`Deleted users count: ${deletedUsers.deletedCount}`);
+
+                for (const user of inactiveUsers) {
+                    await emailManager.sendAccountDeletionNotification(user.email, user.first_name, user.last_name);
+                }
+                return res.status(200).json({ message: `Deleted ${deletedUsers.deletedCount} inactive users` });
+            } else {
+                console.log('No inactive users found to delete');
+                return res.status(200).json({ message: 'No inactive users found to delete' });
+            }
+        } catch (error) {
+            console.error('Error during cleanupInactiveUsers:', error);
+            next(error);
+        }
+    }
+    
+
 }
 
 

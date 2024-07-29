@@ -4,7 +4,9 @@ class UserRepository {
     async findByEmail(email) {
         return UserModel.findOne({ email });
     }
-
+    async getAllUsers() {
+      return await UserModel.find();
+    }
     async createUser(userData) {
         try {
           const user = new UserModel(userData);
@@ -14,6 +16,15 @@ class UserRepository {
           throw error; // Re-throw the error to be caught by the controller
         }
       }
+
+      static async findInactiveSince(cutoffDate) {
+        return UserModel.find({ last_connection: { $lt: cutoffDate } }); // Adjust field name as needed
+    }
+
+    static async deleteUsersByIds(userIds) {
+        return UserModel.deleteMany({ _id: { $in: userIds } });
+    }
+
     
       async findUser(email) {//different maybe it doesnt affect anything.
         try {

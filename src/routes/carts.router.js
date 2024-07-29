@@ -13,7 +13,7 @@ router.delete('/:cid/product/:pid', cartController.deleteProduct);
 router.put('/:cid', cartController.updateCart);
 router.put('/:cid/product/:pid', cartController.updateQuantity);
 router.delete('/:cid', cartController.emptyCart);
-router.post('/:cid/purchase', cartController.checkout);
+router.post('/:cid/checkout', cartController.checkout);//this s the checkout route that shold be in the handlbars
 
 router.post("/:cid/product/:pid", passport.authenticate('jwt', { session: false }), cartController.addProduct);
 

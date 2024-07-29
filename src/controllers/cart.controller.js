@@ -8,8 +8,8 @@ const { generateCode, calculateTotal } = require("../utils/cartutils.js");
 const CustomError = require("../utils/errors/custom-error.js");
 const generateCartErrorInfo = require("../utils/errors/cartinfo.js");
 const EErrors= require("../utils/errors/enum.js");
-
-
+const Email= require("../utils/email.js");
+const emailService = new Email();
 
 class CartController {
     async createCart(req, res) {
@@ -149,12 +149,10 @@ async addProduct(req, res, next) {
     }
 
    
-    
-
     async checkout(req, res) {
         const cartId = req.params.cid;
         try {
-            const cart = await cartRepository.getCartProducts(cartId);
+            let cart = await cartRepository.getCartProducts(cartId);
             const products = cart.products;
     
             const unavailableProductIds = [];
@@ -179,20 +177,32 @@ async addProduct(req, res, next) {
                 code: generateCode(),
                 purchase_datetime: new Date(),
                 amount: totalAmount,
-                purchaser: userWithCart._id
+                purchaser: userWithCart._id,
+                products: cart.products // Add the products to the ticket
             });
             await ticket.save();
-    
+            await emailService.sendTicket(userWithCart.email, userWithCart.first_name, userWithCart.last_name, ticket);
             cart.products = cart.products.filter(item => !unavailableProductIds.includes(item.product.toString()));
             await cart.save();
     
-            res.status(200).json({ unavailableProductIds });
+            await cartRepository.emptyCart(cartId);
+    
+            // Convert the ticket to a plain object
+            const plainTicket = ticket.toObject();
+    
+            // Debug log to check the ticket data
+            console.log('Plain Ticket Data:', plainTicket);
+    
+            // Send the ticket code as a response
+            res.json({ code: ticket.code });
         } catch (error) {
             console.error('Error', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     }
     
+
+
 
 }
 

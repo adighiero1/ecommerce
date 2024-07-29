@@ -10,7 +10,7 @@ const dotenv = require("dotenv");
 const configObject = require("./config/config.js");
 // const {mongo_url, puerto} = configObject; 
 const {mongo_url, puerto, mode} = configObject;  // Include mode here
-const PORT = process.env.PORT || 8080;;
+const PORT = puerto;
 require("./database.js");
 const authMiddleware = require("./middleware/authmiddleware.js");
 const productsRouter = require("./routes/products.router.js");

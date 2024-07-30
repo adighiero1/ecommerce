@@ -9,7 +9,7 @@ const path = require('path');
 const dotenv = require("dotenv");
 const configObject = require("./config/config.js");
 // const {mongo_url, puerto} = configObject; 
-const {mongo_url, puerto, mode} = configObject;  // Include mode here
+const {mongo_url, puerto, mode} = configObject;  // Include mode herefadsdaf
 const PORT = puerto;
 require("./database.js");
 const authMiddleware = require("./middleware/authmiddleware.js");

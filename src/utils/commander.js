@@ -7,7 +7,7 @@ const program = new Command();
 
 // Configuring the command-line options
 program
-  .option("-p <port>", "puerto donde se inicia el servidor", 8080)
+  .option("-p <port>", "puerto donde se inicia el servidor", 5000)
   .option("--mode <mode>", "modo de trabajo", "produccion");
 
 program.parse();

@@ -65,7 +65,7 @@ app.use("/api/products", productsRouter);
 
 app.use(errorHandler);
 swaggerConfig.setup(app);
-const httpServer = app.listen(PORT, () => {
+const httpServer = app.listen(PORT,"0.0.0.0", () => {
     console.log(`Server listening at Port: ${PORT}`);
 });
 

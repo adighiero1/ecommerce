@@ -38,7 +38,29 @@ class UserRepository {
         return await User.findByIdAndUpdate(userId, updateData, { new: true });
     }
 
+    async deleteUser(id) {
+      try {
+          const deletedUser = await UserModel.findByIdAndDelete(id);
+
+          if (!deletedUser) {
+              console.log("The user was not found for deletion.");
+              return null;
+          }
+
+          console.log("User deleted.");
+
+          
+
+          return deletedUser;
+      } catch (error) {
+          throw new Error("Error deleting product!");
+      }
+  }
+
+
     }
+
+    
 
 
 

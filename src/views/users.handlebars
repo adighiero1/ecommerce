@@ -24,15 +24,16 @@
             text-align: center;
             margin-bottom: 20px;
         }
+
         .card {
-             display: flex;
+            display: flex;
             flex-direction: column;
-             height: 100%; /* Ensure the card takes full height of its container */
+            height: 100%;
         }
 
-.card-body {
-    flex: 1; /* Allow the card body to take up remaining space */
-}
+        .card-body {
+            flex: 1;
+        }
     </style>
 </head>
 
@@ -48,13 +49,15 @@
                         <h5 class="card-title">{{this.first_name}} {{this.last_name}}</h5>
                         <p class="card-text">Email: {{this.email}}</p>
                         <p class="card-text">Role: {{this.role}}</p>
+                        <button class="btn btn-danger delete-button" data-id="{{this._id}}">Delete</button>
+                        <button class="btn btn-secondary role-button" data-id="{{this._id}}">Change Role</button>
                     </div>
                 </div>
             </div>
             {{/each}}
-                    <div class="cleanup-button-container">
-            <button style="margin-top: 100px;" id="cleanup-button" class="btn btn-danger" >Clean Up Inactive Users</button>
-        </div>
+            <div class="cleanup-button-container">
+                <button style="margin-top: 100px;" id="cleanup-button" class="btn btn-danger">Clean Up Inactive Users</button>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -65,13 +68,13 @@
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Assuming you store JWT token in local storage
+                        'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
                     }
                 });
 
                 if (response.ok) {
                     alert('Inactive users have been cleaned up.');
-                    location.reload(); // Reload the page to refresh the users list
+                    location.reload();
                 } else {
                     const errorText = await response.text();
                     alert(`Failed to clean up inactive users: ${errorText}`);
@@ -80,6 +83,62 @@
                 console.error('Error cleaning up inactive users:', error);
                 alert('An error occurred while cleaning up inactive users.');
             }
+        });
+
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const userId = event.target.getAttribute('data-id');
+                try {
+                    const response = await fetch(`/api/users/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert('User has been deleted.');
+                        location.reload();
+                    } else {
+                        const errorText = await response.text();
+                        alert(`Failed to delete user: ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    alert('An error occurred while deleting the user.');
+                }
+            });
+        });
+
+    document.querySelectorAll('.role-button').forEach(button => {
+        button.addEventListener('click', async (event) => {
+            const userId = event.target.getAttribute('data-id');
+            try {
+                const newRole = prompt('Enter new role (user, admin, premium):');
+                if (newRole) {
+                    const response = await fetch(`/api/users/changerole`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                        },
+                        body: JSON.stringify({ uid: userId, role: newRole })
+                    });
+
+                    if (response.ok) {
+                        alert('User role has been updated.');
+                        location.reload();
+                    } else {
+                        const errorText = await response.text();
+                        alert(`Failed to update user role: ${errorText}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating user role:', error);
+                alert('An error occurred while updating the user role.');
+            }
+        });
         });
     </script>
 </body>

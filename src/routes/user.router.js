@@ -19,8 +19,10 @@ router.post("/logout", userController.userLogout);
 router.post("/passwordreset",userController.resetPasswordRequest);
 router.post("/resetpassword",userController.passwordReset);
 // router.patch("/change-my-role", passport.authenticate("jwt", { session: false }), userController.changeMyRole);
-router.post("/change-my-role", passport.authenticate("jwt", { session: false }), userController.changeMyRole); // Changed to POST
+router.post("/changerole", passport.authenticate("jwt", { session: false }), userController.changeMyRole); // Changed to POST
 router.delete('/cleanup-inactive',checkUserRole(['admin']), passport.authenticate('jwt', { session: false }), userController.cleanupInactiveUsers);
+// router.delete('/api/users/:id', (req, res, next) => userController.deleteUser(req, res, next));
+router.delete('/:id', userController.deleteUser);
 
 // Endpoint to upload documents
 // router.post('/:uid/documents', upload.array('documents'), (req, res, next) => userController.uploadDocuments(req, res, next));

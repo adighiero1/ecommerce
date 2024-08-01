@@ -229,29 +229,143 @@ class UserController {
 }
 
 
+
+
+
+// async changeMyRole(req, res) {
+//     try {
+//         const { uid, role } = req.body; // Get userId and newRole from request body
+
+//         // Log the values to check if they are correct
+//         console.log('Changing role for user ID:', uid, 'to role:', role);
+
+//         if (!role || (role !== 'user' && role !== 'premium' && role !== 'admin')) {
+//             return res.status(400).json({ success: false, message: 'Invalid role provided' });
+//         }
+
+//         // Logic to update the user's role in the database
+//         const updatedUser = await User.findByIdAndUpdate(uid, { role }, { new: true });
+
+//         if (!updatedUser) {
+//             return res.status(404).json({ success: false, message: 'User not found' });
+//         }
+
+//         res.status(200).json({ success: true, message: 'User role updated successfully', user: updatedUser });
+//     } catch (error) {
+//         console.error('Error changing role:', error); // Log the detailed error
+//         res.status(500).json({ success: false, message: 'Error changing role' });
+//     }
+// }
+
+// async changeMyRole(req, res) {
+//     try {
+//         const { uid, role } = req.body; // Get userId and newRole from request body
+
+//         // Log the values to check if they are correct
+//         console.log('Changing role for user ID:', uid, 'to role:', role);
+
+//         if (!role || (role !== 'user' && role !== 'premium' && role !== 'admin')) {
+//             return res.status(400).json({ success: false, message: 'Invalid role provided' });
+//         }
+
+//         // Logic to update the user's role in the database
+//         const updatedUser = await User.findByIdAndUpdate(uid, { role }, { new: true });
+
+//         if (!updatedUser) {
+//             return res.status(404).json({ success: false, message: 'User not found' });
+//         }
+
+//         res.status(200).json({ success: true, message: 'User role updated successfully', user: updatedUser });
+//     } catch (error) {
+//         console.error('Error changing role:', error); // Log the detailed error
+//         res.status(500).json({ success: false, message: 'Error changing role' });
+//     }
+// }
+
 async changeMyRole(req, res) {
     try {
-        const userId = req.user._id; // Assuming the user ID is available in the JWT payload
-        const newRole = req.body.role;
+        const { uid, role } = req.body; // Get userId and newRole from request body
 
-        if (!newRole || (newRole !== 'user' && newRole !== 'premium')) {
+        // Log the values to check if they are correct
+        console.log('Changing role for user ID:', uid, 'to role:', role);
+
+        if (!role || (role !== 'user' && role !== 'premium' && role !== 'admin')) {
             return res.status(400).json({ success: false, message: 'Invalid role provided' });
         }
 
-        // Logic to update the user's role in the database
-        const updatedUser = await User.findByIdAndUpdate(userId, { role: newRole }, { new: true });
-
-        if (!updatedUser) {
+        // Fetch the user to check documents
+        const user = await User.findById(uid);
+        if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        
-        res.redirect('/api/users/profile');
+        // Check if the documents array is not empty
+        if (!user.documents || user.documents.length === 0) {
+            return res.status(400).json({ success: false, message: 'User has not uploaded any documents' });
+        }
+
+        // Logic to update the user's role in the database
+        const updatedUser = await User.findByIdAndUpdate(uid, { role }, { new: true });
+
+        res.status(200).json({ success: true, message: 'User role updated successfully', user: updatedUser });
     } catch (error) {
         console.error('Error changing role:', error); // Log the detailed error
         res.status(500).json({ success: false, message: 'Error changing role' });
     }
 }
+
+
+
+
+
+// async uploadDocuments(req, res, next) {
+//     try {
+//         console.log("uploadDocuments called");
+
+//         // Log the user ID
+//         const uid = req.user._id;
+//         console.log("UserID:", uid);
+//         const documents= req.files.documents;
+//         // Log the request files
+//         console.log("Files in request:", documents);
+
+//         // Check if files are properly populated
+    
+//        if (!documents || documents.length === 0) {
+//         console.log("No files uploaded or files are not populated correctly.");
+//         return res.status(400).json({ status: 'error', error: 'No files uploaded' });
+//     }
+
+//         // Find user by UID
+//         const user = await UserModel.findById(uid);
+//         if (!user) {
+//             console.log("User not found");
+//             return res.status(404).json({ status: 'error', error: 'User not found' });
+//         }
+
+//         // Log user details
+//         console.log("User found:", user);
+
+//         // Prepare and save the uploaded documents
+//        const savedDocuments= documents.map(file => ({
+//             name: file.originalname,
+//             reference: file.path
+//         }));
+
+//         // Log documents to be saved
+//         console.log("Documents to save:", savedDocuments);
+
+//         user.documents.push(...savedDocuments);
+//         await user.save();
+
+//         console.log("Documents uploaded successfully");
+        
+//         res.redirect('/api/users/profile');
+//     } catch (error) {
+//         console.log("Error uploading documents:", error);
+//         res.status(500).json({ status: 'error', error: 'Unknown error' });
+//     }
+// }
 
 
 async uploadDocuments(req, res, next) {
@@ -261,16 +375,16 @@ async uploadDocuments(req, res, next) {
         // Log the user ID
         const uid = req.user._id;
         console.log("UserID:", uid);
-        const documents= req.files.documents;
+
         // Log the request files
+        const documents = req.files.documents;
         console.log("Files in request:", documents);
 
         // Check if files are properly populated
-    
-       if (!documents || documents.length === 0) {
-        console.log("No files uploaded or files are not populated correctly.");
-        return res.status(400).json({ status: 'error', error: 'No files uploaded' });
-    }
+        if (!documents || documents.length === 0) {
+            console.log("No files uploaded or files are not populated correctly.");
+            return res.status(400).json({ status: 'error', error: 'No files uploaded' });
+        }
 
         // Find user by UID
         const user = await UserModel.findById(uid);
@@ -282,8 +396,11 @@ async uploadDocuments(req, res, next) {
         // Log user details
         console.log("User found:", user);
 
+        // Delete previous documents
+        user.documents = [];
+
         // Prepare and save the uploaded documents
-       const savedDocuments= documents.map(file => ({
+        const savedDocuments = documents.map(file => ({
             name: file.originalname,
             reference: file.path
         }));
@@ -295,13 +412,15 @@ async uploadDocuments(req, res, next) {
         await user.save();
 
         console.log("Documents uploaded successfully");
-        
+
         res.redirect('/api/users/profile');
     } catch (error) {
         console.log("Error uploading documents:", error);
         res.status(500).json({ status: 'error', error: 'Unknown error' });
     }
 }
+
+
 
     async changeRoleToPremium(req, res, next) {
         const { uid } = req.params;
@@ -371,6 +490,28 @@ async uploadDocuments(req, res, next) {
         } catch (error) {
             console.error('Error during cleanupInactiveUsers:', error);
             next(error);
+        }
+    }
+
+    async deleteUser(req, res, next) {
+        const { id } = req.params;
+
+        try {
+            const deletedUser = await userRepository.deleteUser(id);
+
+            if (!deletedUser) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            return res.status(200).json({ message: "User deleted successfully", user: deletedUser });
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            next(new CustomError({
+                name: "DeleteUserError",
+                cause: `Error occurred while deleting user with ID: ${id}`,
+                message: error.message,
+                code: EErrors.SERVER_ERROR
+            }));
         }
     }
     

@@ -24,7 +24,7 @@ class Email{
             <p>You have requested a password reset</p>
             <p>Please use the code below to reset your password</p>
             <h2>${token}<h2>
-            <a href="https://ecommerce-production-46f3.up.railway.app/passwordchange">Reset Password</a>
+            <a href="vapelife.up.railway.app/passwordchange">Reset Password</a>
             <p>If this was not you please ignore thi email`
         }
         await this.transporter.sendMail(emailInfo);

@@ -153,20 +153,52 @@ class ProductRepository {
         }
     }
 
+    // async searchProducts(query) {
+    //     try {
+    //         const products = await ProductModel.find({
+    //             $or: [
+    //                 { title: { $regex: query, $options: 'i' } },
+    //                 { description: { $regex: query, $options: 'i' } }
+    //             ]
+    //         });
+    //         return products;
+    //     } catch (error) {
+    //         throw new Error("Error searching products!");
+    //     }
+    // }
+
+    // async searchProducts(query) {
+    //     try {
+    //         console.log('Repository search query:', query);
+    //         const products = await ProductModel.find({
+    //             $or: [
+    //                 { title: { $regex: query, $options: 'i' } },
+    //                 { description: { $regex: query, $options: 'i' } }
+    //             ]
+    //         });
+    //         console.log('Repository search results:', products);
+    //         return products;
+    //     } catch (error) {
+    //         console.error('Error in repository search:', error);
+    //         throw new Error("Error searching products!");
+    //     }
+    // }
+
     async searchProducts(query) {
         try {
-            const products = await ProductModel.find({
-                $or: [
-                    { title: { $regex: query, $options: 'i' } },
-                    { description: { $regex: query, $options: 'i' } }
-                ]
-            });
+            console.log("Searching for products with query:", query);
+            const products = await ProductModel.aggregate([
+                { $match: { $text: { $search: query } } },
+                { $addFields: { id: { $toString: "$_id" } } },
+                { $project: { _id: 0, id: 1, title: 1, description: 1, price: 1, img: 1 } }
+            ]);
+            console.log("Search results fetched:", products);
             return products;
         } catch (error) {
-            throw new Error("Error searching products!");
+            console.error("Error searching for products:", error.message);
+            throw new Error("Error searching for products: " + error.message);
         }
     }
-
 }
 
 module.exports = ProductRepository;

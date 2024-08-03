@@ -2,6 +2,9 @@ const ProductModel = require("../models/product.model.js");
 const CartRepository = require("../repositories/cart.repository.js");
 const cartRepository = new CartRepository();
 const logger = require("../utils/logger.js");
+
+const ProductRepository= require("../repositories/product.repository.js");
+const productRepository = new ProductRepository();
 class ViewsController {
 
 
@@ -139,6 +142,59 @@ class ViewsController {
     async getChangeRole(req,res){
         res.render("rolechange", { user: req.user });
     }
+    // async getSearch(req,res){
+    //     res.render("searchresults");
+    // }
+
+    // async getSearch(req, res) {
+    //     const { query } = req.query;
+    //     const cartId = req.user.cart; // Access cart ID from authenticated user
+    
+    //     try {
+    //         console.log("Received search query:", query);
+    //         const products = await productRepository.searchProducts(query);
+    //         console.log("Search results fetched:", products);
+    //         console.log("Cart ID:", cartId);
+    
+    //         res.render("searchresults", {
+    //             products,
+    //             query,
+    //             cartId
+    //         });
+    //     } catch (error) {
+    //         console.error("Error searching for products:", error.message);
+    //         res.status(500).json({
+    //             status: 'error',
+    //             error: "Internal server error"
+    //         });
+    //     }
+    // }
+
+    async getSearch(req, res) {
+        const { query } = req.query;
+        const cartId = req.user ? req.user.cart : null; // Use cart ID if authenticated, else set to null
+        
+        try {
+            console.log("Received search query:", query);
+            const products = await productRepository.searchProducts(query);
+            console.log("Search results fetched:", products);
+            console.log("Cart ID:", cartId);
+        
+            res.render("searchresults", {
+                products,
+                query,
+                cartId
+            });
+        } catch (error) {
+            console.error("Error searching for products:", error.message);
+            res.status(500).json({
+                status: 'error',
+                error: "Internal server error"
+            });
+        }
+    }
+    
+    
 }
 
 module.exports = ViewsController;

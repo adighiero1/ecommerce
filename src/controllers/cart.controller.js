@@ -120,7 +120,7 @@ async addProduct(req, res, next) {
         const newQuantity = req.body.quantity;
         try {
             const newcart = await cartRepository.updateQuantity(cartId, productId, newQuantity);
-
+            console.log(cartId);
             res.json({
                 status: 'success',
                 message: 'Product quantity updated',
@@ -201,7 +201,11 @@ async addProduct(req, res, next) {
         }
     }
     
+async gettheproducts(req,res){
+   
+        res.render("searchresults");
 
+}
 
 
 }

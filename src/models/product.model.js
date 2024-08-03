@@ -44,6 +44,9 @@ const productSchema = new mongoose.Schema({
     }
 })
 
+// Create a text index on the title and description fields
+productSchema.index({ title: "text", description: "text" });
+
 productSchema.plugin(mongoosePaginate);
 
 const ProductModel = mongoose.model("products", productSchema);

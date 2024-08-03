@@ -69,17 +69,66 @@ class ProductController {
         }
     }
 
-    async searchProducts  (req, res) {
-        try {
-            const query = req.query.query; // Get the search query from the URL
-            const products = await productRepository.searchProducts(query);
+    // async searchProducts  (req, res) {
+    //     try {
+    //         const query = req.query.query; // Get the search query from the URL
+    //         const products = await productRepository.searchProducts(query);
     
-            res.render('products', { products });
-        } catch (error) {
-            console.error('Error searching products:', error);
-            res.status(500).send('Internal Server Error');
-        }
-    };
+    //         res.render('searchresults', {products, query }); //pass the query to view
+    //     } catch (error) {
+    //         console.error('Error searching products:', error);
+    //         res.status(500).send('Internal Server Error');
+    //     }
+    // };
+    // async searchProducts(req, res) {
+    //     try {
+    //         const query = req.query.query;
+    //         console.log('Search query:', query);
+    //         const products = await productRepository.searchProducts(query);
+    //         console.log('Search results:', products);
+    
+    //         res.render('searchresults', { products, query });
+    //     } catch (error) {
+    //         console.error('Error searching products:', error);
+    //         res.status(500).send('Internal Server Error');
+    //     }
+    // }
+
+//     async searchProducts(req, res) {
+//     // try {
+//     //     const query = req.query.query;
+//     //     console.log('Search query:', query);
+//     //     const products = await productRepository.searchProducts(query);
+//     //     console.log('Search results:', products);
+//     //     res.render('searchresults', { products, query });
+//     // } catch (error) {
+//     //     console.error('Error searching products:', error);
+//     //     res.status(500).send('Internal Server Error');
+//     // }
+//     res.render("searchresults");
+// }
+
+async searchProducts(req, res) {
+    try {
+        console.log('Rendering search results view'); // Add this log to confirm the method is hit
+        res.render('searchresults'); // Render the view
+    } catch (error) {
+        console.error('Error searching products:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+async renderDiv(req, res) {
+    try {
+        console.log('renderDiv method called');
+        res.send('<div>Hello, this is a test div!</div>');
+    } catch (error) {
+        console.error('Error rendering div:', error);
+        res.status(500).send('Error rendering div');
+    }
+}
+
+
 }
 
 module.exports = ProductController; 

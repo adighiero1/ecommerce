@@ -23,8 +23,9 @@ module.exports = (mode) => {
     router.get("/emailconfirmation",viewsController.getEmailConfirmation);
     router.get("/passwordchange",viewsController.getPasswordChange);
     router.get("/rolechange",viewsController.getChangeRole);
-
-
+    router.get("/searchresults",viewsController.getSearch);
+    // router.get("/search",passport.authenticate('jwt', { session: false }), viewsController.getSearch.bind(viewsController));
+    router.get("/search", viewsController.getSearch.bind(viewsController));
     router.get('/checkout/:code', async (req, res) => {
         const ticketCode = req.params.code;
     

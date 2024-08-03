@@ -17,4 +17,7 @@ router.post('/:cid/checkout', cartController.checkout);//this s the checkout rou
 
 router.post("/:cid/product/:pid", passport.authenticate('jwt', { session: false }), cartController.addProduct);
 
+
+
+
 module.exports = router;

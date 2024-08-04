@@ -2,31 +2,106 @@ const ProductModel = require("../models/product.model.js");
 const CartRepository = require("../repositories/cart.repository.js");
 const cartRepository = new CartRepository();
 const logger = require("../utils/logger.js");
-
+const path = require('path');
+const fs = require('fs');
 const ProductRepository= require("../repositories/product.repository.js");
 const productRepository = new ProductRepository();
 class ViewsController {
 
+    // getRandomImage = () => {
+    //     const imagesPath = path.join(__dirname, '..', 'public', 'images');
+    //     const imageFiles = fs.readdirSync(imagesPath);
+    //     const randomIndex = Math.floor(Math.random() * imageFiles.length);
+    //     return imageFiles[randomIndex];
+    // }
 
+    // async getProducts(req, res) {
+    //     try {
+    //         const { page = 1, limit = 6 } = req.query;
+    //         const skip = (page - 1) * limit;
+
+    //         const products = await ProductModel.aggregate([
+    //             { $skip: skip },
+    //             { $limit: parseInt(limit) },
+    //             { $addFields: { id: { $toString: "$_id" } } },
+    //             { $project: { _id: 0, id: 1, title: 1, description: 1, price: 1, img: 1 } } // Explicitly project required fields
+    //         ]);
+    //         req.logger.info("Fetched products:", { products});
+    //         // console.log("Fetched products:", products);
+
+    //         const totalProducts = await ProductModel.countDocuments();
+    //         const totalPages = Math.ceil(totalProducts / limit);
+    //         const hasPrevPage = page > 1;
+    //         const hasNextPage = page < totalPages;
+
+    //         res.render("products", {
+    //             products,
+    //             hasPrevPage,
+    //             hasNextPage,
+    //             prevPage: hasPrevPage ? parseInt(page) - 1 : null,
+    //             nextPage: hasNextPage ? parseInt(page) + 1 : null,
+    //             currentPage: parseInt(page),
+    //             totalPages,
+    //             cartId: req.user.cart.toString()
+    //         });
+
+    //     } catch (error) {
+    //         // console.error("Error fetching products", error);
+    //         req.logger.error("Error fetching products", { error });
+    //         res.status(500).json({
+    //             status: 'error',
+    //             error: "Internal server error"
+    //         });
+    //     }
+    // }
+    
+    
+    
     async getProducts(req, res) {
         try {
             const { page = 1, limit = 6 } = req.query;
             const skip = (page - 1) * limit;
 
+            // Fetch products from the database
             const products = await ProductModel.aggregate([
                 { $skip: skip },
                 { $limit: parseInt(limit) },
                 { $addFields: { id: { $toString: "$_id" } } },
-                { $project: { _id: 0, id: 1, title: 1, description: 1, price: 1, img: 1 } } // Explicitly project required fields
+                { $project: { _id: 0, id: 1, title: 1, description: 1, price: 1 } } // Explicitly project required fields
             ]);
-            req.logger.info("Fetched products:", { products});
-            // console.log("Fetched products:", products);
 
+            // Log the fetched products
+            req.logger.info("Fetched products:", { products });
+
+            // Define getRandomImage function within getProducts method
+            const getRandomImage = () => {
+                const imagesPath = path.join(__dirname, '..', 'public', 'images');
+                const imageFiles = fs.readdirSync(imagesPath);
+                if (imageFiles.length === 0) {
+                    return 'filter.jpg'; // Use a default image
+                }
+                const randomIndex = Math.floor(Math.random() * imageFiles.length);
+                const selectedImage = imageFiles[randomIndex];
+                return selectedImage || 'default.jpg'; // Ensure a valid image is always returned
+            };
+
+            // Attach a random image to each product
+            products.forEach(product => {
+                const randomImage = getRandomImage();
+                console.log(`Assigning image ${randomImage} to product ${product.id}`); // Log image assignment
+                product.image = `/images/${randomImage}`;
+            });
+
+            // Log products with images
+            console.log('Products with images:', products);
+
+            // Calculate pagination information
             const totalProducts = await ProductModel.countDocuments();
             const totalPages = Math.ceil(totalProducts / limit);
             const hasPrevPage = page > 1;
             const hasNextPage = page < totalPages;
 
+            // Render the products view with pagination info
             res.render("products", {
                 products,
                 hasPrevPage,
@@ -39,7 +114,7 @@ class ViewsController {
             });
 
         } catch (error) {
-            // console.error("Error fetching products", error);
+            // Log the error and respond with an error message
             req.logger.error("Error fetching products", { error });
             res.status(500).json({
                 status: 'error',
@@ -47,8 +122,6 @@ class ViewsController {
             });
         }
     }
-    
-
    
 
     async getCart(req, res) {

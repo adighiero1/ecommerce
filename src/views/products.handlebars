@@ -1,3 +1,4 @@
+{{!-- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +23,9 @@
             border-radius: 0.5rem;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .card:hover {
@@ -34,6 +38,11 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 1.5rem;
+            flex: 1;
+        }
+
+        .card-content {
+            flex-grow: 1;
         }
 
         .card-title {
@@ -55,8 +64,16 @@
             margin-bottom: 1.5rem;
         }
 
+        .card-image {
+            max-width: 150px;
+            height: 180px; /* Adjust this value to make the image longer */
+            border-radius: 0.5rem;
+            margin: 0 auto;
+        }
+
         .btnMios {
             border-radius: 0.3rem;
+            margin-top: auto; /* Ensure button is at the bottom */
         }
 
         .pagination-container {
@@ -91,18 +108,18 @@
         }
 
         .pagination a {
-    background-color: #28a745; /* Green */
-    color: #fff; /* White text */
-}
+            background-color: #28a745; /* Green */
+            color: #fff; /* White text */
+        }
 
-.pagination a:hover {
-    background-color: #218838; /* Darker green on hover */
-}
+        .pagination a:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
 
-.pagination a.disabled {
-    background-color: #c6e3c4; /* Light green for disabled */
-    color: #6c757d; /* Secondary Gray text */
-}
+        .pagination a.disabled {
+            background-color: #c6e3c4; /* Light green for disabled */
+            color: #6c757d; /* Secondary Gray text */
+        }
     </style>
 </head>
 <body>
@@ -117,10 +134,206 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h2 class="card-title">{{title}}</h2>
-                        <p class="card-text">{{description}}</p>
-                        <p class="card-price">Price: ${{price}}</p>
-                        <form class="add-to-cart-form">
+                        <div class="d-flex flex-column flex-md-row">
+                            <div class="card-content flex-grow-1">
+                                <h2 class="card-title">{{title}}</h2>
+                                <p class="card-text">{{description}}</p>
+                                <p class="card-price">Price: ${{price}}</p>
+                            </div>
+                            <img src="/images/mods.avif" alt="{{title}}" class="card-image align-self-start">
+                        </div>
+                        <form class="add-to-cart-form mt-3">
+                            <input type="hidden" name="productId" value="{{id}}">
+                            <button class="btnMios btn btn-primary w-100" type="submit">Add to cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        
+        <div class="pagination-container">
+            <div class="pagination text-center">
+                <a href="{{#if hasPrevPage}}/products?page={{prevPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasPrevPage}}disabled{{/unless}}">Previous</a>
+                <p class="mt-2">Page {{currentPage}} of {{totalPages}}</p>
+                <a href="{{#if hasNextPage}}/products?page={{nextPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasNextPage}}disabled{{/unless}}">Next</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.add-to-cart-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const productId = form.querySelector('input[name="productId"]').value;
+                try {
+                    const response = await fetch(`/api/carts/{{cartId}}/product/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to add product to cart');
+                    }
+                    // Redirect to the cart page
+                    window.location.href = `/carts/{{cartId}}`;
+                } catch (error) {
+                    console.error('Error adding product to cart:', error);
+                    // Optionally, show error message to user
+                }
+            });
+        });
+    </script>
+</body>
+</html> --}}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f1f3f5;
+            color: #343a40;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .card-content {
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .card-price {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-image {
+            max-width: 150px;
+            height: 180px; /* Adjust this value to make the image longer */
+            border-radius: 0.5rem;
+            margin: 0 auto;
+        }
+
+        .btnMios {
+            border-radius: 0.3rem;
+            margin-top: auto; /* Ensure button is at the bottom */
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+        }
+
+        .pagination a {
+            margin: 0 0.5rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            min-width: 100px; /* Set a minimum width for consistency */
+        }
+
+        .pagination a.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Optional: Center the page number text with buttons */
+        .pagination p {
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            min-width: 100px;
+        }
+
+        .pagination a {
+            background-color: #28a745; /* Green */
+            color: #fff; /* White text */
+        }
+
+        .pagination a:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        .pagination a.disabled {
+            background-color: #c6e3c4; /* Light green for disabled */
+            color: #6c757d; /* Secondary Gray text */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="display-4">Products</h1>
+            <a href="/carts/{{cartId}}" class="btn btn-outline-primary mt-3">View Cart</a>
+        </div>
+
+        <div class="row">
+            {{#each products}}
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex flex-column flex-md-row">
+                            <div class="card-content flex-grow-1">
+                                <h2 class="card-title">{{title}}</h2>
+                                <p class="card-text">{{description}}</p>
+                                <p class="card-price">Price: ${{price}}</p>
+                            </div>
+                            <img src="{{image}}" alt="{{title}}" class="card-image align-self-start">
+                        </div>
+                        <form class="add-to-cart-form mt-3">
                             <input type="hidden" name="productId" value="{{id}}">
                             <button class="btnMios btn btn-primary w-100" type="submit">Add to cart</button>
                         </form>

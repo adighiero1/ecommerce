@@ -243,29 +243,167 @@ class ViewsController {
     //     }
     // }
 
-    async getSearch(req, res) {
-        const { query } = req.query;
-        const cartId = req.user ? req.user.cart : null; // Use cart ID if authenticated, else set to null
+    // async getSearch(req, res) {
+    //     const { query } = req.query;
+    //     const cartId = req.user ? req.user.cart : null; // Use cart ID if authenticated, else set to null
         
+    //     try {
+    //         console.log("Received search query:", query);
+    //         const products = await productRepository.searchProducts(query);
+    //         console.log("Search results fetched:", products);
+    //         console.log("Cart ID:", cartId);
+        
+    //         res.render("searchresults", {
+    //             products,
+    //             query,
+    //             cartId
+    //         });
+    //     } catch (error) {
+    //         console.error("Error searching for products:", error.message);
+    //         res.status(500).json({
+    //             status: 'error',
+    //             error: "Internal server error"
+    //         });
+    //     }
+    // }
+
+    // async getSearch(req, res) {
+    //     const { query = '', page = 1, limit = 6 } = req.query;
+    //     const skip = (page - 1) * limit;
+    //     const cartId = req.user ? req.user.cart : null; // Use cart ID if authenticated, else set to null
+    
+    //     try {
+    //         console.log("Received search query:", query);
+    
+    //         // Define getRandomImage function
+    //         const getRandomImage = () => {
+    //             const imagesPath = path.join(__dirname, '..', 'public', 'images');
+    //             const imageFiles = fs.readdirSync(imagesPath);
+    //             if (imageFiles.length === 0) {
+    //                 return 'default.jpg'; // Use a default image
+    //             }
+    //             const randomIndex = Math.floor(Math.random() * imageFiles.length);
+    //             return imageFiles[randomIndex] || 'default.jpg'; // Ensure a valid image is always returned
+    //         };
+    
+    //         // Search products with pagination
+    //         const products = await productRepository.searchProducts(query, skip, limit);
+    //         console.log("Search results fetched:", products);
+    //         console.log("Cart ID:", cartId);
+    
+    //         // Attach a random image to each product
+    //         products.forEach(product => {
+    //             const randomImage = getRandomImage();
+    //             console.log(`Assigning image ${randomImage} to product ${product.id}`); // Log image assignment
+    //             product.image = `/images/${randomImage}`;
+    //         });
+    
+    //         // Count total number of search results
+    //         const totalProducts = await ProductModel.countDocuments({
+    //             $text: { $search: query }
+    //         });
+    //         const totalPages = Math.ceil(totalProducts / limit);
+    //         const hasPrevPage = page > 1;
+    //         const hasNextPage = page < totalPages;
+    
+    //         // Render the search results view with pagination info
+    //         res.render("searchresults", {
+    //             products,
+    //             query,
+    //             hasPrevPage,
+    //             hasNextPage,
+    //             prevPage: hasPrevPage ? parseInt(page) - 1 : null,
+    //             nextPage: hasNextPage ? parseInt(page) + 1 : null,
+    //             currentPage: parseInt(page),
+    //             totalPages,
+    //             cartId
+    //         });
+    
+    //     } catch (error) {
+    //         // Log the error and respond with an error message
+    //         console.error("Error searching for products:", error.message);
+    //         req.logger.error("Error searching for products", { error });
+    //         res.status(500).json({
+    //             status: 'error',
+    //             error: "Internal server error"
+    //         });
+    //     }
+    // }
+    
+    async getSearch(req, res) {
+        const { query = '', page = 1, limit = 6 } = req.query;
+        const skip = (page - 1) * limit;
+        const cartId = req.user ? req.user.cart : null; // Use cart ID if authenticated, else set to null
+    
         try {
             console.log("Received search query:", query);
-            const products = await productRepository.searchProducts(query);
+            console.log("Pagination values:", { page, limit, skip });
+    
+            // Define getRandomImage function
+            const getRandomImage = () => {
+                const imagesPath = path.join(__dirname, '..', 'public', 'images');
+                const imageFiles = fs.readdirSync(imagesPath);
+                if (imageFiles.length === 0) {
+                    return 'default.jpg'; // Use a default image
+                }
+                const randomIndex = Math.floor(Math.random() * imageFiles.length);
+                return imageFiles[randomIndex] || 'default.jpg'; // Ensure a valid image is always returned
+            };
+    
+            // Search products with pagination
+            const products = await productRepository.searchProducts(query, skip, limit);
             console.log("Search results fetched:", products);
             console.log("Cart ID:", cartId);
-        
+    
+            // Attach a random image to each product
+            products.forEach(product => {
+                const randomImage = getRandomImage();
+                console.log(`Assigning image ${randomImage} to product ${product.id}`); // Log image assignment
+                product.image = `/images/${randomImage}`;
+            });
+    
+            // Count total number of search results
+            const totalProducts = await ProductModel.countDocuments({
+                $text: { $search: query }
+            });
+            const totalPages = Math.ceil(totalProducts / limit);
+            const hasPrevPage = page > 1;
+            const hasNextPage = page < totalPages;
+    
+            // Log pagination info
+            console.log("Pagination Info:", {
+                hasPrevPage,
+                hasNextPage,
+                prevPage: hasPrevPage ? page - 1 : null,
+                nextPage: hasNextPage ? page + 1 : null,
+                currentPage: page,
+                totalPages
+            });
+    
+            // Render the search results view with pagination info
             res.render("searchresults", {
                 products,
                 query,
+                hasPrevPage,
+                hasNextPage,
+                prevPage: hasPrevPage ? page - 1 : null,
+                nextPage: hasNextPage ? page + 1 : null,
+                currentPage: page,
+                totalPages,
                 cartId
             });
+    
         } catch (error) {
+            // Log the error and respond with an error message
             console.error("Error searching for products:", error.message);
+            req.logger.error("Error searching for products", { error });
             res.status(500).json({
                 status: 'error',
                 error: "Internal server error"
             });
         }
     }
+    
     
     
 }

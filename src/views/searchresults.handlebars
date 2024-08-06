@@ -294,7 +294,7 @@
     </style>
 </head>
 <body>
-    <div class="container mt-4">
+    <div class="container">
         <div class="text-center mb-4">
             <h1 class="display-4">Search Results</h1>
             <a href="/carts/{{cartId}}" class="btn btn-outline-primary mt-3">View Cart</a>
@@ -322,12 +322,12 @@
             </div>
             {{/each}}
         </div>
-        
+
         <div class="pagination-container">
             <div class="pagination text-center">
-                <a href="{{#if hasPrevPage}}/search?page={{prevPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasPrevPage}}disabled{{/unless}}">Previous</a>
+                <a href="{{#if hasPrevPage}}/search?query={{query}}&page={{prevPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasPrevPage}}disabled{{/unless}}">Previous</a>
                 <p class="mt-2">Page {{currentPage}} of {{totalPages}}</p>
-                <a href="{{#if hasNextPage}}/search?page={{nextPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasNextPage}}disabled{{/unless}}">Next</a>
+                <a href="{{#if hasNextPage}}/search?query={{query}}&page={{nextPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasNextPage}}disabled{{/unless}}">Next</a>
             </div>
         </div>
     </div>
@@ -348,19 +348,15 @@
                     if (!response.ok) {
                         throw new Error('Failed to add product to cart');
                     }
-                    // Redirect to the cart page
                     window.location.href = `/carts/{{cartId}}`;
                 } catch (error) {
                     console.error('Error adding product to cart:', error);
-                    // Optionally, show error message to user
                 }
             });
         });
     </script>
 </body>
 </html> --}}
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -485,7 +481,7 @@
     </style>
 </head>
 <body>
-    <div class="container mt-4">
+    <div class="container">
         <div class="text-center mb-4">
             <h1 class="display-4">Search Results</h1>
             <a href="/carts/{{cartId}}" class="btn btn-outline-primary mt-3">View Cart</a>
@@ -513,24 +509,12 @@
             </div>
             {{/each}}
         </div>
-        
+
         <div class="pagination-container">
             <div class="pagination text-center">
-                <a href="{{#if hasPrevPage}}/search?page={{prevPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasPrevPage}}disabled{{/unless}}">Previous</a>
+                <a href="{{#if hasPrevPage}}/search?query={{query}}&page={{prevPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasPrevPage}}disabled{{/unless}}">Previous</a>
                 <p class="mt-2">Page {{currentPage}} of {{totalPages}}</p>
-                <a href="{{#if hasNextPage}}/search?page={{nextPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasNextPage}}disabled{{/unless}}">Next</a>
-                <!-- Debugging Output -->
-                <div class="mt-3">
-                    <p><strong>Debugging info:</strong></p>
-                    <ul>
-                        <li>hasPrevPage: {{hasPrevPage}}</li>
-                        <li>prevPage: {{prevPage}}</li>
-                        <li>hasNextPage: {{hasNextPage}}</li>
-                        <li>nextPage: {{nextPage}}</li>
-                        <li>currentPage: {{currentPage}}</li>
-                        <li>totalPages: {{totalPages}}</li>
-                    </ul>
-                </div>
+                <a href="{{#if hasNextPage}}/search?query={{query}}&page={{nextPage}}{{else}}#{{/if}}" class="btn btn-secondary {{#unless hasNextPage}}disabled{{/unless}}">Next</a>
             </div>
         </div>
     </div>
@@ -551,14 +535,21 @@
                     if (!response.ok) {
                         throw new Error('Failed to add product to cart');
                     }
-                    // Redirect to the cart page
                     window.location.href = `/carts/{{cartId}}`;
                 } catch (error) {
                     console.error('Error adding product to cart:', error);
-                    // Optionally, show error message to user
                 }
             });
         });
+
+        // Debugging Pagination
+        console.log("Pagination Info:");
+        console.log("Current Page:", {{currentPage}});
+        console.log("Total Pages:", {{totalPages}});
+        console.log("Has Previous Page:", {{hasPrevPage}});
+        console.log("Previous Page:", {{prevPage}});
+        console.log("Has Next Page:", {{hasNextPage}});
+        console.log("Next Page:", {{nextPage}});
     </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -61,6 +61,112 @@
                             <div class="card">
                                 <div class="card-body text-center">
                                     <p class="card-text">"Great product and service!" Alejandro</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more testimonials here -->
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#testimonialsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+</body>
+</html> --}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <title>Ecommerce Homepage</title>
+    <style>
+        
+        /* Custom styles for the testimonials */
+        .testimonial-footer-spacing {
+            margin-bottom: 50px; /* Adjust the value as needed */
+        }
+        .carousel-item {
+            text-align: center;
+            padding: 20px;
+        }
+        .carousel-item .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .carousel-item .card-body {
+            padding: 20px;
+        }
+        .carousel-item .card-text {
+            font-style: italic;
+        }
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+          
+        }
+        
+        /* Custom styles for the footer */
+        footer {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 25px 0;
+            font-size: 0.85em;
+        }
+        footer a {
+            color: #333;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        footer .container {
+            max-width: 1200px;
+        }
+        footer h5 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 1em;
+        }
+        footer p {
+            color: #666;
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Testimonials Carousel -->
+    <div>
+        <h2 class="text-center mb-4">Customer Testimonials</h2>
+        <div id="testimonialsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text">"Great product and service!" <br> - Alejandro</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text">"I love the variety of products available. Highly recommend!" <br> - Maria</p>
                                 </div>
                             </div>
                         </div>
